@@ -1330,7 +1330,7 @@
         // ============================================
         // ===== 🗄️ SUPABASE CONFIGURATION =====
         // ============================================
-        // 🔴 IMPORTANT: Replace these with YOUR actual Supabase credentials
+        // ✅ YOUR ACTUAL CREDENTIALS (Already correct!)
         const supabaseUrl = "https://wwzqkprdukzfhgwfhyoy.supabase.co";
         const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3enFrcHJkdWt6Zmhnd2ZoeW95Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyNjQ3MjAsImV4cCI6MjEwMzg0MDcyMH0.LUDF1tzo04IJUz5cDyCcsgpvp7nQ32KaZ87pQ3_k4Z0";
         
@@ -1449,7 +1449,7 @@
         // Save Products to Supabase
         async function saveProductsToSupabase() {
             try {
-                // Delete all existing products
+                // First, delete all existing products
                 const { error: deleteError } = await supabaseClient
                     .from('products')
                     .delete()
@@ -1457,7 +1457,7 @@
                 
                 if (deleteError) throw deleteError;
                 
-                // Insert all products
+                // Then insert all products
                 if (products.length > 0) {
                     const { error: insertError } = await supabaseClient
                         .from('products')
@@ -1477,7 +1477,7 @@
         // Save Sales to Supabase
         async function saveSalesToSupabase() {
             try {
-                // Delete all existing sales
+                // First, delete all existing sales
                 const { error: deleteError } = await supabaseClient
                     .from('sales')
                     .delete()
@@ -1485,7 +1485,7 @@
                 
                 if (deleteError) throw deleteError;
                 
-                // Insert all sales
+                // Then insert all sales
                 if (sales.length > 0) {
                     const { error: insertError } = await supabaseClient
                         .from('sales')
@@ -1578,14 +1578,8 @@
         // ===== INITIALIZATION =====
         // ============================================
         function init() {
-            // Check if Supabase is configured with real credentials
-            if (supabaseUrl !== "https://YOUR_PROJECT_ID.supabase.co" && supabaseKey !== "YOUR_ANON_KEY") {
-                loadFromSupabase();
-            } else {
-                console.warn('⚠️ Supabase not configured, using localStorage');
-                loadFromLocalStorage();
-                updateSupabaseStatus(false);
-            }
+            // ✅ FIXED: Directly load from Supabase since we have real credentials
+            loadFromSupabase();
             document.getElementById('userRole').textContent = 'Employee';
         }
 
@@ -1891,10 +1885,7 @@
             }
             
             saveToLocalStorage();
-            // Try to save to Supabase
-            if (supabaseUrl !== "https://YOUR_PROJECT_ID.supabase.co" && supabaseKey !== "YOUR_ANON_KEY") {
-                await saveToSupabase();
-            }
+            await saveToSupabase();
             clearForm();
             renderAll();
             alert('✅ Product saved successfully!');
@@ -1907,9 +1898,7 @@
             if (confirm('Delete this product?')) {
                 products = products.filter(p => p.id !== id);
                 saveToLocalStorage();
-                if (supabaseUrl !== "https://YOUR_PROJECT_ID.supabase.co" && supabaseKey !== "YOUR_ANON_KEY") {
-                    saveToSupabase();
-                }
+                saveToSupabase();
                 renderAll();
             }
         }
@@ -2089,9 +2078,7 @@
             });
             
             saveToLocalStorage();
-            if (supabaseUrl !== "https://YOUR_PROJECT_ID.supabase.co" && supabaseKey !== "YOUR_ANON_KEY") {
-                await saveToSupabase();
-            }
+            await saveToSupabase();
             
             document.getElementById('saleQuantity').value = '';
             document.getElementById('salePrice').value = '';
