@@ -1324,18 +1324,18 @@
     </div>
 
     <!-- ============================================================ -->
-    <!-- ====== SUPABASE CONFIGURATION ====== -->
+    <!-- ====== JAVASCRIPT - ALL FUNCTIONALITY ====== -->
     <!-- ============================================================ -->
     <script>
         // ============================================
         // ===== 🗄️ SUPABASE CONFIGURATION =====
         // ============================================
-        // 🔴 IMPORTANT: Replace these with YOUR Supabase credentials
-        const supabaseUrl = "https://your-project-id.supabase.co";
-        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlvdXItcHJvamVjdC1pZCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzI1MjEwMjM2LCJleHAiOjIwNDA3ODYyMzZ9.YOUR_ACTUAL_KEY";
+        // 🔴 IMPORTANT: Replace these with YOUR actual Supabase credentials
+        const supabaseUrl = "https://wwzqkprdukzfhgwfhyoy.supabase.co";
+        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3enFrcHJkdWt6Zmhnd2ZoeW95Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyNjQ3MjAsImV4cCI6MjEwMzg0MDcyMH0.LUDF1tzo04IJUz5cDyCcsgpvp7nQ32KaZ87pQ3_k4Z0";
         
         // Initialize Supabase client
-        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
         let isOnline = false;
 
         // ============================================
@@ -1379,7 +1379,7 @@
         // Load Products from Supabase
         async function loadProductsFromSupabase() {
             try {
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('products')
                     .select('*');
                 
@@ -1405,7 +1405,7 @@
         // Load Sales from Supabase
         async function loadSalesFromSupabase() {
             try {
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('sales')
                     .select('*');
                 
@@ -1450,7 +1450,7 @@
         async function saveProductsToSupabase() {
             try {
                 // Delete all existing products
-                const { error: deleteError } = await supabase
+                const { error: deleteError } = await supabaseClient
                     .from('products')
                     .delete()
                     .neq('id', '');
@@ -1459,7 +1459,7 @@
                 
                 // Insert all products
                 if (products.length > 0) {
-                    const { error: insertError } = await supabase
+                    const { error: insertError } = await supabaseClient
                         .from('products')
                         .insert(products);
                     
@@ -1478,7 +1478,7 @@
         async function saveSalesToSupabase() {
             try {
                 // Delete all existing sales
-                const { error: deleteError } = await supabase
+                const { error: deleteError } = await supabaseClient
                     .from('sales')
                     .delete()
                     .neq('id', '');
@@ -1487,7 +1487,7 @@
                 
                 // Insert all sales
                 if (sales.length > 0) {
-                    const { error: insertError } = await supabase
+                    const { error: insertError } = await supabaseClient
                         .from('sales')
                         .insert(sales);
                     
@@ -1578,8 +1578,8 @@
         // ===== INITIALIZATION =====
         // ============================================
         function init() {
-            // Check if Supabase is configured
-            if (supabaseUrl !== "YOUR_SUPABASE_URL" && supabaseKey !== "YOUR_SUPABASE_ANON_KEY") {
+            // Check if Supabase is configured with real credentials
+            if (supabaseUrl !== "https://YOUR_PROJECT_ID.supabase.co" && supabaseKey !== "YOUR_ANON_KEY") {
                 loadFromSupabase();
             } else {
                 console.warn('⚠️ Supabase not configured, using localStorage');
@@ -1892,7 +1892,7 @@
             
             saveToLocalStorage();
             // Try to save to Supabase
-            if (supabaseUrl !== "YOUR_SUPABASE_URL" && supabaseKey !== "YOUR_SUPABASE_ANON_KEY") {
+            if (supabaseUrl !== "https://YOUR_PROJECT_ID.supabase.co" && supabaseKey !== "YOUR_ANON_KEY") {
                 await saveToSupabase();
             }
             clearForm();
@@ -1907,7 +1907,7 @@
             if (confirm('Delete this product?')) {
                 products = products.filter(p => p.id !== id);
                 saveToLocalStorage();
-                if (supabaseUrl !== "YOUR_SUPABASE_URL" && supabaseKey !== "YOUR_SUPABASE_ANON_KEY") {
+                if (supabaseUrl !== "https://YOUR_PROJECT_ID.supabase.co" && supabaseKey !== "YOUR_ANON_KEY") {
                     saveToSupabase();
                 }
                 renderAll();
@@ -2089,7 +2089,7 @@
             });
             
             saveToLocalStorage();
-            if (supabaseUrl !== "YOUR_SUPABASE_URL" && supabaseKey !== "YOUR_SUPABASE_ANON_KEY") {
+            if (supabaseUrl !== "https://YOUR_PROJECT_ID.supabase.co" && supabaseKey !== "YOUR_ANON_KEY") {
                 await saveToSupabase();
             }
             
