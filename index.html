@@ -1,0 +1,2402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMART TECHNOLOGY - Digital Information Hub</title>
+    
+    <!-- ===== SUPABASE SDK ===== -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f4f8;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 82, 212, 0.15);
+            border: 1px solid #e8edf5;
+        }
+
+        /* ===== HEADER WITH LOGO ===== */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #0052d4;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
+            padding: 15px 20px;
+            border-radius: 12px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #0052d4, #0066ff);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0, 82, 212, 0.3);
+            position: relative;
+        }
+
+        .logo-icon::after {
+            content: 'ST';
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-text .company-name {
+            font-size: 22px;
+            font-weight: 800;
+            color: #0052d4;
+            letter-spacing: 1px;
+            line-height: 1.2;
+        }
+
+        .logo-text .company-tagline {
+            font-size: 12px;
+            color: #4a6fa5;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .logo-text .company-name span {
+            color: #003399;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-badge span {
+            background: #0052d4;
+            color: white;
+            padding: 5px 18px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Supabase Status Indicator */
+        .supabase-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #27ae60;
+            padding: 4px 12px;
+            background: #e8f8f0;
+            border-radius: 20px;
+            border: 1px solid #27ae60;
+        }
+
+        .supabase-status .dot {
+            width: 8px;
+            height: 8px;
+            background: #27ae60;
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .supabase-status.offline {
+            color: #e74c3c;
+            border-color: #e74c3c;
+            background: #fde8e8;
+        }
+
+        .supabase-status.offline .dot {
+            background: #e74c3c;
+        }
+
+        /* ===== BUTTON STYLES ===== */
+        button {
+            background: #0052d4;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 82, 212, 0.2);
+        }
+
+        button:hover {
+            background: #003399;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 82, 212, 0.3);
+        }
+
+        .btn-success {
+            background: #00a86b;
+        }
+
+        .btn-success:hover {
+            background: #008f5a;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        /* ===== TABS ===== */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            background: #f0f7ff;
+            padding: 8px;
+            border-radius: 12px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            color: #4a6fa5;
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-weight: 600;
+            box-shadow: none;
+        }
+
+        .tab-btn:hover {
+            background: rgba(0, 82, 212, 0.08);
+            transform: none;
+            box-shadow: none;
+        }
+
+        .tab-btn.active {
+            background: #0052d4;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 82, 212, 0.3);
+        }
+
+        .tab-btn.active:hover {
+            background: #003399;
+            transform: translateY(-2px);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== STATS GRID ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #0052d4, #0066ff);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 82, 212, 0.25);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stat-card:nth-child(2) {
+            background: linear-gradient(135deg, #00a86b, #00c97a);
+            box-shadow: 0 4px 15px rgba(0, 168, 107, 0.25);
+        }
+
+        .stat-card:nth-child(3) {
+            background: linear-gradient(135deg, #f5a623, #ffb84d);
+            box-shadow: 0 4px 15px rgba(245, 166, 35, 0.25);
+        }
+
+        .stat-card:nth-child(4) {
+            background: linear-gradient(135deg, #e74c3c, #ff6b6b);
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.25);
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .stat-card p {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        /* ===== SEARCH STYLES ===== */
+        .search-section {
+            background: #f0f7ff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid #d6e4f5;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .search-input-wrapper {
+            flex: 1;
+            position: relative;
+            min-width: 200px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: #4a6fa5;
+        }
+
+        .search-input-wrapper input {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            border: 2px solid #d6e4f5;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .search-input-wrapper input:focus {
+            outline: none;
+            border-color: #0052d4;
+            box-shadow: 0 0 0 3px rgba(0, 82, 212, 0.1);
+        }
+
+        .clear-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #95a5a6;
+            cursor: pointer;
+            padding: 4px;
+            display: none;
+            box-shadow: none;
+        }
+
+        .clear-btn:hover {
+            color: #e74c3c;
+            transform: translateY(-50%) scale(1.1);
+            background: none;
+        }
+
+        .search-btn {
+            background: #0052d4;
+            padding: 12px 28px;
+            white-space: nowrap;
+        }
+
+        .clear-all-btn {
+            background: #e74c3c;
+            padding: 12px 20px;
+            white-space: nowrap;
+        }
+
+        .clear-all-btn:hover {
+            background: #c0392b;
+        }
+
+        .search-filters {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            padding-top: 15px;
+            border-top: 1px solid #d6e4f5;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group label {
+            font-size: 13px;
+            color: #4a6fa5;
+            font-weight: 600;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 8px 12px;
+            border: 1px solid #d6e4f5;
+            border-radius: 6px;
+            font-size: 13px;
+            background: white;
+            color: #2c3e50;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: #0052d4;
+        }
+
+        .price-filter {
+            width: 100px;
+        }
+
+        .price-separator {
+            color: #4a6fa5;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .search-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-left: auto;
+        }
+
+        .search-count {
+            font-size: 14px;
+            color: #0052d4;
+            font-weight: 600;
+        }
+
+        .search-time {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        /* ===== FILTER CHIPS ===== */
+        .filter-chips {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #d6e4f5;
+        }
+
+        .chip-label {
+            font-size: 13px;
+            color: #4a6fa5;
+            font-weight: 600;
+        }
+
+        .chip {
+            background: white;
+            color: #0052d4;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            border: 1px solid #0052d4;
+            transition: all 0.3s ease;
+            box-shadow: none;
+            font-weight: 500;
+        }
+
+        .chip:hover {
+            background: #0052d4;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 82, 212, 0.2);
+        }
+
+        .chip.active {
+            background: #0052d4;
+            color: white;
+            border-color: #0052d4;
+        }
+
+        /* ===== PRODUCT GRID ===== */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            border: 1px solid #e8edf5;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: white;
+            position: relative;
+        }
+
+        .product-card:hover {
+            box-shadow: 0 8px 25px rgba(0, 82, 212, 0.12);
+            transform: translateY(-5px);
+            border-color: #0052d4;
+        }
+
+        .product-card .product-image-container {
+            width: 100%;
+            height: 180px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f0f7ff;
+            position: relative;
+        }
+
+        .product-card .product-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .product-image-container img {
+            transform: scale(1.05);
+        }
+
+        .product-card .no-image {
+            height: 180px;
+            background: #f0f7ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 48px;
+            color: #b8cfe0;
+        }
+
+        .product-card h4 {
+            margin: 10px 0 5px;
+            color: #1a2a4a;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .product-card .sku {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+
+        .product-card .category {
+            font-size: 12px;
+            color: #0052d4;
+            background: #e8f0fe;
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 12px;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .product-card .price {
+            color: #00a86b;
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        .product-card .cost-price {
+            font-size: 12px;
+            color: #7f8c8d;
+            text-decoration: line-through;
+        }
+
+        .product-card .stock {
+            font-size: 14px;
+            margin: 5px 0;
+            font-weight: 600;
+        }
+
+        .product-card .stock.low {
+            color: #e74c3c;
+        }
+
+        .product-card .stock.out {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .product-card .stock.normal {
+            color: #00a86b;
+        }
+
+        .product-card .match-indicator {
+            display: inline-block;
+            background: #0052d4;
+            color: white;
+            font-size: 10px;
+            padding: 2px 10px;
+            border-radius: 12px;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        .product-card.highlight {
+            border-color: #0052d4;
+            background: #f5f9ff;
+            box-shadow: 0 0 0 3px rgba(0, 82, 212, 0.15);
+        }
+
+        .product-card.hidden {
+            display: none !important;
+        }
+
+        /* ===== FORM STYLES ===== */
+        .form-section {
+            background: #f0f7ff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #d6e4f5;
+        }
+
+        .form-section h2 {
+            color: #0052d4;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        input, select {
+            padding: 10px 14px;
+            border: 1px solid #d6e4f5;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #0052d4;
+            box-shadow: 0 0 0 3px rgba(0, 82, 212, 0.08);
+        }
+
+        input[type="file"] {
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        .image-preview-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 5px;
+        }
+
+        .image-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 2px solid #d6e4f5;
+            display: none;
+        }
+
+        .image-preview.show {
+            display: block;
+        }
+
+        /* ===== SALES AUTO-CALCULATION STYLES ===== */
+        .sale-summary {
+            background: #e8f0fe;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: none;
+            border-left: 4px solid #0052d4;
+        }
+
+        .sale-summary.show {
+            display: block;
+        }
+
+        .sale-summary .sale-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            font-size: 15px;
+        }
+
+        .sale-summary .sale-detail .label {
+            color: #4a6fa5;
+            font-weight: 500;
+        }
+
+        .sale-summary .sale-detail .value {
+            font-weight: 700;
+            color: #0052d4;
+        }
+
+        .sale-summary .sale-detail .value.total {
+            color: #00a86b;
+            font-size: 18px;
+        }
+
+        .sale-summary .sale-detail .value.unit-price {
+            color: #f5a623;
+        }
+
+        .sale-summary .divider {
+            border-top: 1px solid #d6e4f5;
+            margin: 8px 0;
+        }
+
+        /* ===== TABLE STYLES ===== */
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 20px;
+            border-radius: 12px;
+            border: 1px solid #e8edf5;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e8edf5;
+        }
+
+        th {
+            background: #f0f7ff;
+            font-weight: 600;
+            color: #0052d4;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:hover {
+            background: #f8faff;
+        }
+
+        td .table-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #e8edf5;
+        }
+
+        /* ===== REPORTS ===== */
+        .report-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .report-filters .report-btn {
+            padding: 10px 24px;
+            font-size: 14px;
+        }
+
+        .report-filters .report-btn.active {
+            background: #003399;
+            box-shadow: 0 4px 16px rgba(0, 82, 212, 0.4);
+        }
+
+        .report-filters .report-btn.yearly {
+            background: #8e44ad;
+        }
+
+        .report-filters .report-btn.yearly:hover {
+            background: #6c3483;
+        }
+
+        .report-filters .report-btn.yearly.active {
+            background: #6c3483;
+            box-shadow: 0 4px 16px rgba(142, 68, 173, 0.4);
+        }
+
+        #reportOutput {
+            background: #f0f7ff;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #d6e4f5;
+        }
+
+        #reportOutput h3 {
+            color: #0052d4;
+        }
+
+        .report-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .report-summary .stat-card {
+            background: linear-gradient(135deg, #0052d4, #0066ff);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+        }
+
+        .report-summary .stat-card:nth-child(2) {
+            background: linear-gradient(135deg, #00a86b, #00c97a);
+        }
+
+        .report-summary .stat-card:nth-child(3) {
+            background: linear-gradient(135deg, #f5a623, #ffb84d);
+        }
+
+        .report-summary .stat-card:nth-child(4) {
+            background: linear-gradient(135deg, #8e44ad, #a569bd);
+        }
+
+        .report-summary .stat-card h3 {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .report-summary .stat-card p {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        /* ===== YEARLY REPORT MONTHLY BREAKDOWN ===== */
+        .monthly-breakdown {
+            margin-top: 20px;
+        }
+
+        .monthly-breakdown h4 {
+            color: #0052d4;
+            margin-bottom: 10px;
+        }
+
+        .month-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .month-card {
+            background: white;
+            border: 1px solid #d6e4f5;
+            border-radius: 8px;
+            padding: 12px 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .month-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 82, 212, 0.12);
+            border-color: #0052d4;
+        }
+
+        .month-card .month-name {
+            font-weight: 700;
+            color: #0052d4;
+            font-size: 14px;
+        }
+
+        .month-card .month-revenue {
+            font-size: 18px;
+            font-weight: 700;
+            color: #00a86b;
+            margin-top: 5px;
+        }
+
+        .month-card .month-items {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .month-card .month-transactions {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .month-card.no-sales {
+            opacity: 0.5;
+        }
+
+        .month-card.no-sales .month-revenue {
+            color: #95a5a6;
+        }
+
+        /* ===== LOADING OVERLAY ===== */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f0f7ff;
+            border-top: 4px solid #0052d4;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #0052d4;
+            font-weight: 600;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .header-left {
+                width: 100%;
+            }
+
+            .logo-text .company-name {
+                font-size: 18px;
+            }
+
+            .logo-icon {
+                width: 50px;
+                height: 50px;
+            }
+
+            .header-right {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .search-filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group {
+                flex-wrap: wrap;
+            }
+            
+            .search-stats {
+                margin-left: 0;
+                justify-content: space-between;
+                width: 100%;
+            }
+            
+            .price-filter {
+                width: 80px;
+            }
+
+            .tabs {
+                gap: 5px;
+            }
+
+            .tab-btn {
+                padding: 8px 14px;
+                font-size: 12px;
+            }
+
+            .product-card .product-image-container {
+                height: 140px;
+            }
+
+            .month-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
+        }
+
+        @media (max-width: 600px) {
+            .table-wrapper {
+                overflow-x: scroll;
+            }
+            table {
+                font-size: 12px;
+            }
+            th, td {
+                padding: 8px;
+            }
+            
+            .search-container {
+                flex-direction: column;
+            }
+            
+            .search-btn, .clear-all-btn {
+                width: 100%;
+            }
+
+            .logo-text .company-name {
+                font-size: 15px;
+            }
+
+            .logo-text .company-tagline {
+                font-size: 10px;
+            }
+
+            .product-card .product-image-container {
+                height: 120px;
+            }
+
+            .month-grid {
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            }
+
+            .month-card .month-revenue {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ===== LOADING OVERLAY ===== -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading data from cloud...</div>
+    </div>
+
+    <div class="container">
+        <!-- ===== HEADER WITH LOGO ===== -->
+        <header>
+            <div class="header-left">
+                <div class="logo-container">
+                    <div class="logo-icon"></div>
+                    <div class="logo-text">
+                        <div class="company-name">
+                            SMART TECHNOLOGY <span>DIGITAL INFORMATION HUB</span>
+                        </div>
+                        <div class="company-tagline">⚡ Inventory Management System</div>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="supabase-status" id="supabaseStatus">
+                    <span class="dot"></span>
+                    <span>Cloud Sync</span>
+                </div>
+                <div class="user-badge">
+                    <span id="userRole">Employee</span>
+                    <button onclick="toggleRole()" style="background:#0052d4;">Switch to Admin</button>
+                </div>
+                <button onclick="syncToCloud()" class="btn-success">☁️ Sync Now</button>
+            </div>
+        </header>
+
+        <!-- ===== NAVIGATION TABS ===== -->
+        <nav class="tabs">
+            <button class="tab-btn active" onclick="showTab('dashboard')">📊 Dashboard</button>
+            <button class="tab-btn" onclick="showTab('products')">📝 Products</button>
+            <button class="tab-btn" onclick="showTab('sales')">💰 Sales</button>
+            <button class="tab-btn" onclick="showTab('reports')">📈 Reports</button>
+        </nav>
+
+        <!-- ===== DASHBOARD TAB ===== -->
+        <div id="dashboard" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Products</h3>
+                    <p id="totalProducts">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Stock Value</h3>
+                    <p id="totalValue">₦0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Today's Sales</h3>
+                    <p id="todaySales">₦0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Low Stock Items</h3>
+                    <p id="lowStock">0</p>
+                </div>
+            </div>
+
+            <!-- ===== SEARCH BAR ===== -->
+            <div class="search-section">
+                <div class="search-container">
+                    <div class="search-input-wrapper">
+                        <span class="search-icon">🔍</span>
+                        <input 
+                            type="text" 
+                            id="quickSearch" 
+                            placeholder="Search products by name, SKU, price, or category..." 
+                            onkeyup="quickSearch()" 
+                            autofocus
+                        >
+                        <button onclick="clearSearch()" class="clear-btn" id="clearSearchBtn">✕</button>
+                    </div>
+                    <button onclick="quickSearch()" class="search-btn">Search</button>
+                    <button onclick="clearSearch()" class="clear-all-btn">Clear All</button>
+                </div>
+
+                <div class="search-filters">
+                    <div class="filter-group">
+                        <label>Search in:</label>
+                        <select id="searchFilter" onchange="quickSearch()">
+                            <option value="all">📋 All Fields</option>
+                            <option value="name">📝 Product Name</option>
+                            <option value="sku">🏷️ SKU</option>
+                            <option value="category">📂 Category</option>
+                            <option value="price">💰 Price</option>
+                            <option value="stock">📊 Stock Level</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Price (₦):</label>
+                        <input type="number" id="minPrice" placeholder="Min" oninput="quickSearch()" class="price-filter">
+                        <span class="price-separator">to</span>
+                        <input type="number" id="maxPrice" placeholder="Max" oninput="quickSearch()" class="price-filter">
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Stock:</label>
+                        <select id="stockFilter" onchange="quickSearch()">
+                            <option value="all">All Stock</option>
+                            <option value="in">In Stock</option>
+                            <option value="low">Low Stock (&lt;5)</option>
+                            <option value="out">Out of Stock</option>
+                        </select>
+                    </div>
+
+                    <div class="search-stats">
+                        <span id="searchResultsCount" class="search-count">0 products found</span>
+                        <span id="searchTime" class="search-time"></span>
+                    </div>
+                </div>
+
+                <!-- ===== QUICK FILTER CHIPS ===== -->
+                <div class="filter-chips">
+                    <span class="chip-label">Quick filters:</span>
+                    <button class="chip" onclick="applyChipFilter('low')">🔴 Low Stock</button>
+                    <button class="chip" onclick="applyChipFilter('out')">⛔ Out of Stock</button>
+                    <button class="chip" onclick="applyChipFilter('under20000')">💰 Under ₦20,000</button>
+                    <button class="chip" onclick="applyChipFilter('over100000')">💰 Over ₦100,000</button>
+                    <button class="chip" onclick="applyChipFilter('all')">📋 Show All</button>
+                </div>
+            </div>
+
+            <div id="productGrid" class="product-grid"></div>
+        </div>
+
+        <!-- ===== PRODUCTS TAB ===== -->
+        <div id="products" class="tab-content">
+            <div class="form-section">
+                <h2>📝 Add / Edit Product</h2>
+                <form id="productForm" onsubmit="saveProduct(event)">
+                    <input type="hidden" id="productId">
+                    <div class="form-row">
+                        <input type="text" id="productName" placeholder="Product Name" required>
+                        <input type="text" id="productSKU" placeholder="SKU (optional)">
+                        <input type="text" id="productCategory" placeholder="Category (e.g., Electronics)">
+                    </div>
+                    <div class="form-row">
+                        <input type="number" id="costPrice" placeholder="Cost Price (₦)" step="0.01" required>
+                        <input type="number" id="sellingPrice" placeholder="Selling Price (₦)" step="0.01" required>
+                        <input type="number" id="lastPrice" placeholder="Last Price (₦)" step="0.01">
+                    </div>
+                    <div class="form-row">
+                        <input type="number" id="quantity" placeholder="Quantity" required>
+                        <div style="display:flex;flex-direction:column;gap:5px;">
+                            <input type="file" id="productImage" accept="image/*" onchange="previewImage(event)">
+                            <div class="image-preview-container">
+                                <img id="imagePreview" class="image-preview" alt="Product Image Preview">
+                                <span style="font-size:12px;color:#7f8c8d;">Upload product image</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" style="background:#0052d4;">💾 Save Product</button>
+                    <button type="button" onclick="clearForm()" style="background:#e74c3c;">🗑️ Clear</button>
+                </form>
+            </div>
+
+            <div class="table-wrapper">
+                <table id="productTable">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>SKU</th>
+                            <th>Category</th>
+                            <th>Cost (₦)</th>
+                            <th>Selling (₦)</th>
+                            <th>Last Price (₦)</th>
+                            <th>Stock</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ===== SALES TAB WITH AUTO-CALCULATION ===== -->
+        <div id="sales" class="tab-content">
+            <div class="form-section">
+                <h2>💰 Record Sale</h2>
+                <form onsubmit="recordSale(event)">
+                    <div class="form-row">
+                        <select id="saleProduct" required onchange="calculateSale()">
+                            <option value="">Select Product</option>
+                        </select>
+                        <input type="number" id="saleQuantity" placeholder="Quantity" min="1" required oninput="calculateSale()">
+                    </div>
+                    <div class="form-row">
+                        <input type="number" id="salePrice" placeholder="Selling Price (₦) - override" step="0.01" oninput="calculateSale()">
+                        <button type="submit" style="background:#00a86b;">💰 Record Sale</button>
+                    </div>
+
+                    <!-- ===== AUTO-CALCULATED SALE SUMMARY ===== -->
+                    <div id="saleSummary" class="sale-summary">
+                        <div class="sale-detail">
+                            <span class="label">Product:</span>
+                            <span class="value" id="saleProductName">-</span>
+                        </div>
+                        <div class="sale-detail">
+                            <span class="label">Unit Price:</span>
+                            <span class="value unit-price" id="saleUnitPrice">₦0.00</span>
+                        </div>
+                        <div class="sale-detail">
+                            <span class="label">Quantity:</span>
+                            <span class="value" id="saleQtyDisplay">0</span>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="sale-detail">
+                            <span class="label" style="font-weight:700;">Total Amount:</span>
+                            <span class="value total" id="saleTotalAmount">₦0.00</span>
+                        </div>
+                        <div class="sale-detail" style="font-size:13px;color:#7f8c8d;">
+                            <span class="label">Available Stock:</span>
+                            <span class="value" id="saleAvailableStock" style="color:#7f8c8d;">0</span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Product</th>
+                            <th>Qty</th>
+                            <th>Price (₦)</th>
+                            <th>Total (₦)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="salesTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ===== REPORTS TAB WITH YEARLY OPTION ===== -->
+        <div id="reports" class="tab-content">
+            <div class="report-filters">
+                <button class="report-btn" onclick="generateReport('daily', this)">📅 Today</button>
+                <button class="report-btn" onclick="generateReport('weekly', this)">📆 This Week</button>
+                <button class="report-btn" onclick="generateReport('monthly', this)">📊 This Month</button>
+                <button class="report-btn yearly" onclick="generateReport('yearly', this)">📈 Yearly (All Months)</button>
+            </div>
+            <div id="reportOutput">
+                <p style="color:#7f8c8d;text-align:center;padding:40px 0;">Select a report type above to view</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ====== SUPABASE CONFIGURATION ====== -->
+    <!-- ============================================================ -->
+    <script>
+        // ============================================
+        // ===== 🗄️ SUPABASE CONFIGURATION =====
+        // ============================================
+        // 🔴 IMPORTANT: Replace these with YOUR Supabase credentials
+        const supabaseUrl = "YOUR_SUPABASE_URL";
+        const supabaseKey = "YOUR_SUPABASE_ANON_KEY";
+        
+        // Initialize Supabase client
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        let isOnline = false;
+
+        // ============================================
+        // ===== DATA STORE =====
+        // ============================================
+        let products = [];
+        let sales = [];
+        let isAdmin = false;
+        let searchTimeout = null;
+
+        const CURRENCY = '₦';
+        const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+        // ============================================
+        // ===== LOADING INDICATOR =====
+        // ============================================
+        function showLoading(show) {
+            const overlay = document.getElementById('loadingOverlay');
+            if (show) {
+                overlay.classList.add('show');
+            } else {
+                overlay.classList.remove('show');
+            }
+        }
+
+        function updateSupabaseStatus(online) {
+            const status = document.getElementById('supabaseStatus');
+            if (online) {
+                status.className = 'supabase-status';
+                status.innerHTML = '<span class="dot"></span><span>Cloud Sync</span>';
+            } else {
+                status.className = 'supabase-status offline';
+                status.innerHTML = '<span class="dot"></span><span>Offline Mode</span>';
+            }
+        }
+
+        // ============================================
+        // ===== SUPABASE DATA OPERATIONS =====
+        // ============================================
+        
+        // Load Products from Supabase
+        async function loadProductsFromSupabase() {
+            try {
+                const { data, error } = await supabase
+                    .from('products')
+                    .select('*');
+                
+                if (error) throw error;
+                
+                if (data) {
+                    products = data;
+                    console.log('✅ Products loaded from Supabase:', products.length);
+                } else {
+                    products = [];
+                }
+                renderAll();
+                updateSupabaseStatus(true);
+                return true;
+            } catch (error) {
+                console.error('❌ Error loading products:', error);
+                loadFromLocalStorage();
+                updateSupabaseStatus(false);
+                return false;
+            }
+        }
+
+        // Load Sales from Supabase
+        async function loadSalesFromSupabase() {
+            try {
+                const { data, error } = await supabase
+                    .from('sales')
+                    .select('*');
+                
+                if (error) throw error;
+                
+                if (data) {
+                    sales = data;
+                    console.log('✅ Sales loaded from Supabase:', sales.length);
+                } else {
+                    sales = [];
+                }
+                renderAll();
+                updateSupabaseStatus(true);
+                return true;
+            } catch (error) {
+                console.error('❌ Error loading sales:', error);
+                loadFromLocalStorage();
+                updateSupabaseStatus(false);
+                return false;
+            }
+        }
+
+        // Load all data from Supabase
+        async function loadFromSupabase() {
+            showLoading(true);
+            try {
+                await Promise.all([
+                    loadProductsFromSupabase(),
+                    loadSalesFromSupabase()
+                ]);
+                showLoading(false);
+                updateSupabaseStatus(true);
+            } catch (error) {
+                console.error('❌ Error loading data:', error);
+                loadFromLocalStorage();
+                showLoading(false);
+                updateSupabaseStatus(false);
+            }
+        }
+
+        // Save Products to Supabase
+        async function saveProductsToSupabase() {
+            try {
+                // Delete all existing products
+                const { error: deleteError } = await supabase
+                    .from('products')
+                    .delete()
+                    .neq('id', '');
+                
+                if (deleteError) throw deleteError;
+                
+                // Insert all products
+                if (products.length > 0) {
+                    const { error: insertError } = await supabase
+                        .from('products')
+                        .insert(products);
+                    
+                    if (insertError) throw insertError;
+                }
+                
+                console.log('✅ Products saved to Supabase');
+                return true;
+            } catch (error) {
+                console.error('❌ Error saving products:', error);
+                return false;
+            }
+        }
+
+        // Save Sales to Supabase
+        async function saveSalesToSupabase() {
+            try {
+                // Delete all existing sales
+                const { error: deleteError } = await supabase
+                    .from('sales')
+                    .delete()
+                    .neq('id', '');
+                
+                if (deleteError) throw deleteError;
+                
+                // Insert all sales
+                if (sales.length > 0) {
+                    const { error: insertError } = await supabase
+                        .from('sales')
+                        .insert(sales);
+                    
+                    if (insertError) throw insertError;
+                }
+                
+                console.log('✅ Sales saved to Supabase');
+                return true;
+            } catch (error) {
+                console.error('❌ Error saving sales:', error);
+                return false;
+            }
+        }
+
+        // Save all data to Supabase
+        async function saveToSupabase() {
+            showLoading(true);
+            try {
+                await Promise.all([
+                    saveProductsToSupabase(),
+                    saveSalesToSupabase()
+                ]);
+                showLoading(false);
+                updateSupabaseStatus(true);
+                return true;
+            } catch (error) {
+                console.error('❌ Error saving data:', error);
+                showLoading(false);
+                updateSupabaseStatus(false);
+                return false;
+            }
+        }
+
+        // Sync to cloud
+        async function syncToCloud() {
+            const result = await saveToSupabase();
+            if (result) {
+                alert('☁️ Data synced to Supabase successfully!');
+            } else {
+                alert('⚠️ Failed to sync data. Please check your connection.');
+            }
+        }
+
+        // ============================================
+        // ===== LOCAL STORAGE FALLBACK =====
+        // ============================================
+        function loadFromLocalStorage() {
+            products = JSON.parse(localStorage.getItem('products')) || [];
+            sales = JSON.parse(localStorage.getItem('sales')) || [];
+            renderAll();
+            updateSupabaseStatus(false);
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('products', JSON.stringify(products));
+            localStorage.setItem('sales', JSON.stringify(sales));
+        }
+
+        function renderAll() {
+            renderProductGrid();
+            renderProductTable();
+            populateSaleSelect();
+            renderSalesTable();
+            updateStats();
+            updateSearchCount();
+        }
+
+        // ============================================
+        // ===== IMAGE PREVIEW =====
+        // ============================================
+        function previewImage(event) {
+            const file = event.target.files[0];
+            const preview = document.getElementById('imagePreview');
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.classList.add('show');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.classList.remove('show');
+                preview.src = '';
+            }
+        }
+
+        // ============================================
+        // ===== INITIALIZATION =====
+        // ============================================
+        function init() {
+            // Check if Supabase is configured
+            if (supabaseUrl !== "YOUR_SUPABASE_URL" && supabaseKey !== "YOUR_SUPABASE_ANON_KEY") {
+                loadFromSupabase();
+            } else {
+                console.warn('⚠️ Supabase not configured, using localStorage');
+                loadFromLocalStorage();
+                updateSupabaseStatus(false);
+            }
+            document.getElementById('userRole').textContent = 'Employee';
+        }
+
+        // ============================================
+        // ===== 🧮 SALE AUTO-CALCULATION =====
+        // ============================================
+        function calculateSale() {
+            const productId = document.getElementById('saleProduct').value;
+            const quantity = parseInt(document.getElementById('saleQuantity').value) || 0;
+            const overridePrice = parseFloat(document.getElementById('salePrice').value);
+            
+            const summary = document.getElementById('saleSummary');
+            const product = products.find(p => p.id === productId);
+            
+            if (!product || quantity <= 0) {
+                summary.classList.remove('show');
+                return;
+            }
+            
+            const unitPrice = overridePrice > 0 ? overridePrice : product.sellingPrice;
+            const total = unitPrice * quantity;
+            
+            document.getElementById('saleProductName').textContent = product.name;
+            document.getElementById('saleUnitPrice').textContent = `${CURRENCY}${unitPrice.toFixed(2)}`;
+            document.getElementById('saleQtyDisplay').textContent = quantity;
+            document.getElementById('saleTotalAmount').textContent = `${CURRENCY}${total.toFixed(2)}`;
+            document.getElementById('saleAvailableStock').textContent = product.quantity;
+            
+            summary.classList.add('show');
+            
+            const stockDisplay = document.getElementById('saleAvailableStock');
+            if (quantity > product.quantity) {
+                stockDisplay.style.color = '#e74c3c';
+                stockDisplay.textContent = `⚠️ Only ${product.quantity} available!`;
+            } else {
+                stockDisplay.style.color = '#7f8c8d';
+                stockDisplay.textContent = product.quantity;
+            }
+        }
+
+        // ============================================
+        // ===== SEARCH FUNCTIONS =====
+        // ============================================
+        function quickSearch() {
+            if (searchTimeout) {
+                clearTimeout(searchTimeout);
+            }
+            
+            const searchInput = document.getElementById('quickSearch');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            if (searchInput.value.length > 0) {
+                clearBtn.style.display = 'block';
+            } else {
+                clearBtn.style.display = 'none';
+            }
+            
+            searchTimeout = setTimeout(() => {
+                performSearch();
+            }, 300);
+        }
+
+        function performSearch() {
+            const startTime = performance.now();
+            
+            const searchTerm = document.getElementById('quickSearch').value.toLowerCase().trim();
+            const filterType = document.getElementById('searchFilter').value;
+            const minPrice = parseFloat(document.getElementById('minPrice').value) || 0;
+            const maxPrice = parseFloat(document.getElementById('maxPrice').value) || Infinity;
+            const stockFilter = document.getElementById('stockFilter').value;
+            
+            const cards = document.querySelectorAll('.product-card');
+            let visibleCount = 0;
+            
+            cards.forEach(card => {
+                const productId = card.dataset.productId;
+                const product = products.find(p => p.id === productId);
+                if (!product) {
+                    card.style.display = 'none';
+                    return;
+                }
+                
+                let match = false;
+                let matchFields = [];
+                
+                const price = product.sellingPrice;
+                if (price < minPrice || price > maxPrice) {
+                    card.style.display = 'none';
+                    return;
+                }
+                
+                if (stockFilter === 'in' && product.quantity <= 0) {
+                    card.style.display = 'none';
+                    return;
+                }
+                if (stockFilter === 'low' && product.quantity >= 5) {
+                    card.style.display = 'none';
+                    return;
+                }
+                if (stockFilter === 'out' && product.quantity > 0) {
+                    card.style.display = 'none';
+                    return;
+                }
+                
+                if (!searchTerm) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                    card.classList.remove('highlight');
+                    card.classList.remove('hidden');
+                    return;
+                }
+                
+                switch(filterType) {
+                    case 'name':
+                        match = product.name.toLowerCase().includes(searchTerm);
+                        if (match) matchFields.push('Name');
+                        break;
+                    case 'sku':
+                        match = product.sku && product.sku.toLowerCase().includes(searchTerm);
+                        if (match) matchFields.push('SKU');
+                        break;
+                    case 'category':
+                        match = product.category && product.category.toLowerCase().includes(searchTerm);
+                        if (match) matchFields.push('Category');
+                        break;
+                    case 'price':
+                        match = product.sellingPrice.toString().includes(searchTerm);
+                        if (match) matchFields.push('Price');
+                        break;
+                    case 'stock':
+                        const stockStr = product.quantity.toString();
+                        match = stockStr.includes(searchTerm) || 
+                               (searchTerm === 'low' && product.quantity < 5) ||
+                               (searchTerm === 'out' && product.quantity === 0);
+                        if (match) matchFields.push('Stock');
+                        break;
+                    case 'all':
+                    default:
+                        const searchableFields = [
+                            product.name,
+                            product.sku || '',
+                            product.category || '',
+                            product.sellingPrice.toString(),
+                            product.costPrice.toString(),
+                            product.lastPrice ? product.lastPrice.toString() : '',
+                            product.quantity.toString(),
+                            product.id
+                        ];
+                        match = searchableFields.some(field => 
+                            field.toLowerCase().includes(searchTerm)
+                        );
+                        if (match) {
+                            const matchedField = searchableFields.find(field => 
+                                field.toLowerCase().includes(searchTerm)
+                            );
+                            if (matchedField) {
+                                const fieldNames = {
+                                    [product.name]: 'Name',
+                                    [product.sku]: 'SKU',
+                                    [product.category]: 'Category',
+                                    [product.sellingPrice.toString()]: 'Price'
+                                };
+                                matchFields.push(fieldNames[matchedField] || 'Field');
+                            }
+                        }
+                        break;
+                }
+                
+                if (match) {
+                    card.style.display = 'block';
+                    card.classList.remove('hidden');
+                    visibleCount++;
+                    card.classList.add('highlight');
+                    
+                    const existingIndicator = card.querySelector('.match-indicator');
+                    if (existingIndicator) existingIndicator.remove();
+                    
+                    if (matchFields.length > 0) {
+                        const indicator = document.createElement('div');
+                        indicator.className = 'match-indicator';
+                        indicator.textContent = `Match: ${matchFields.join(', ')}`;
+                        card.appendChild(indicator);
+                    }
+                } else {
+                    card.style.display = 'none';
+                    card.classList.add('hidden');
+                    card.classList.remove('highlight');
+                }
+            });
+            
+            document.getElementById('searchResultsCount').textContent = 
+                `${visibleCount} product${visibleCount !== 1 ? 's' : ''} found`;
+            
+            const endTime = performance.now();
+            document.getElementById('searchTime').textContent = `(${(endTime - startTime).toFixed(1)}ms)`;
+        }
+
+        function clearSearch() {
+            document.getElementById('quickSearch').value = '';
+            document.getElementById('searchFilter').value = 'all';
+            document.getElementById('minPrice').value = '';
+            document.getElementById('maxPrice').value = '';
+            document.getElementById('stockFilter').value = 'all';
+            document.getElementById('clearSearchBtn').style.display = 'none';
+            performSearch();
+            document.getElementById('quickSearch').focus();
+        }
+
+        // ============================================
+        // ===== FILTER CHIPS FUNCTION =====
+        // ============================================
+        function applyChipFilter(filter) {
+            const searchInput = document.getElementById('quickSearch');
+            
+            switch(filter) {
+                case 'low':
+                    searchInput.value = 'low';
+                    document.getElementById('searchFilter').value = 'stock';
+                    document.getElementById('minPrice').value = '';
+                    document.getElementById('maxPrice').value = '';
+                    break;
+                case 'out':
+                    searchInput.value = 'out';
+                    document.getElementById('searchFilter').value = 'stock';
+                    document.getElementById('minPrice').value = '';
+                    document.getElementById('maxPrice').value = '';
+                    break;
+                case 'under20000':
+                    document.getElementById('minPrice').value = '';
+                    document.getElementById('maxPrice').value = '20000';
+                    document.getElementById('searchFilter').value = 'all';
+                    searchInput.value = '';
+                    break;
+                case 'over100000':
+                    document.getElementById('minPrice').value = '100000';
+                    document.getElementById('maxPrice').value = '';
+                    document.getElementById('searchFilter').value = 'all';
+                    searchInput.value = '';
+                    break;
+                case 'all':
+                    clearSearch();
+                    return;
+            }
+            quickSearch();
+        }
+
+        function updateSearchCount() {
+            document.getElementById('searchResultsCount').textContent = `${products.length} products found`;
+        }
+
+        // ============================================
+        // ===== PRODUCT CRUD =====
+        // ============================================
+        function saveProduct(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('productId').value;
+            const name = document.getElementById('productName').value;
+            const sku = document.getElementById('productSKU').value;
+            const category = document.getElementById('productCategory').value;
+            const costPrice = parseFloat(document.getElementById('costPrice').value);
+            const sellingPrice = parseFloat(document.getElementById('sellingPrice').value);
+            const lastPrice = parseFloat(document.getElementById('lastPrice').value) || sellingPrice;
+            const quantity = parseInt(document.getElementById('quantity').value);
+            const imageFile = document.getElementById('productImage').files[0];
+            
+            let imageData = '';
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imageData = e.target.result;
+                    saveProductData(id, name, sku, category, costPrice, sellingPrice, lastPrice, quantity, imageData);
+                };
+                reader.readAsDataURL(imageFile);
+            } else {
+                saveProductData(id, name, sku, category, costPrice, sellingPrice, lastPrice, quantity, imageData);
+            }
+        }
+
+        async function saveProductData(id, name, sku, category, costPrice, sellingPrice, lastPrice, quantity, imageData) {
+            const product = {
+                id: id || Date.now().toString(),
+                name,
+                sku: sku || '',
+                category: category || '',
+                costPrice,
+                sellingPrice,
+                lastPrice,
+                quantity,
+                image: imageData,
+                created_at: new Date().toISOString()
+            };
+            
+            if (id) {
+                const index = products.findIndex(p => p.id === id);
+                if (index !== -1) {
+                    if (!imageData && products[index].image) {
+                        product.image = products[index].image;
+                    }
+                    products[index] = product;
+                }
+            } else {
+                products.push(product);
+            }
+            
+            saveToLocalStorage();
+            // Try to save to Supabase
+            if (supabaseUrl !== "YOUR_SUPABASE_URL" && supabaseKey !== "YOUR_SUPABASE_ANON_KEY") {
+                await saveToSupabase();
+            }
+            clearForm();
+            renderAll();
+            alert('✅ Product saved successfully!');
+            
+            document.getElementById('imagePreview').classList.remove('show');
+            document.getElementById('imagePreview').src = '';
+        }
+
+        function deleteProduct(id) {
+            if (confirm('Delete this product?')) {
+                products = products.filter(p => p.id !== id);
+                saveToLocalStorage();
+                if (supabaseUrl !== "YOUR_SUPABASE_URL" && supabaseKey !== "YOUR_SUPABASE_ANON_KEY") {
+                    saveToSupabase();
+                }
+                renderAll();
+            }
+        }
+
+        function editProduct(id) {
+            const product = products.find(p => p.id === id);
+            if (product) {
+                document.getElementById('productId').value = product.id;
+                document.getElementById('productName').value = product.name;
+                document.getElementById('productSKU').value = product.sku || '';
+                document.getElementById('productCategory').value = product.category || '';
+                document.getElementById('costPrice').value = product.costPrice;
+                document.getElementById('sellingPrice').value = product.sellingPrice;
+                document.getElementById('lastPrice').value = product.lastPrice || product.sellingPrice;
+                document.getElementById('quantity').value = product.quantity;
+                
+                if (product.image) {
+                    const preview = document.getElementById('imagePreview');
+                    preview.src = product.image;
+                    preview.classList.add('show');
+                } else {
+                    document.getElementById('imagePreview').classList.remove('show');
+                }
+                
+                document.querySelector('.form-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function clearForm() {
+            document.getElementById('productId').value = '';
+            document.getElementById('productName').value = '';
+            document.getElementById('productSKU').value = '';
+            document.getElementById('productCategory').value = '';
+            document.getElementById('costPrice').value = '';
+            document.getElementById('sellingPrice').value = '';
+            document.getElementById('lastPrice').value = '';
+            document.getElementById('quantity').value = '';
+            document.getElementById('productImage').value = '';
+            document.getElementById('imagePreview').classList.remove('show');
+            document.getElementById('imagePreview').src = '';
+        }
+
+        // ============================================
+        // ===== RENDER FUNCTIONS =====
+        // ============================================
+        function renderProductGrid() {
+            const grid = document.getElementById('productGrid');
+            if (!grid) return;
+            
+            if (products.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:#4a6fa5;">
+                        <h3 style="font-size:24px;">📦 No products yet</h3>
+                        <p style="margin-top:10px;">Add your first product using the "Products" tab</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = products.map(p => {
+                let stockClass = 'normal';
+                if (p.quantity === 0) stockClass = 'out';
+                else if (p.quantity < 5) stockClass = 'low';
+                
+                const stockLabel = p.quantity === 0 ? 'OUT OF STOCK' : 
+                                  p.quantity < 5 ? `⚠️ Only ${p.quantity} left` : 
+                                  `${p.quantity} in stock`;
+                
+                return `
+                    <div class="product-card" data-product-id="${p.id}">
+                        <div class="product-image-container">
+                            ${p.image ? 
+                                `<img src="${p.image}" alt="${p.name}">` : 
+                                `<div class="no-image">📦</div>`
+                            }
+                        </div>
+                        <h4>${p.name}</h4>
+                        ${p.sku ? `<div class="sku">SKU: ${p.sku}</div>` : ''}
+                        ${p.category ? `<div class="category">${p.category}</div>` : ''}
+                        <div class="price">${CURRENCY}${p.sellingPrice.toFixed(2)}</div>
+                        ${isAdmin ? `<div class="cost-price">Cost: ${CURRENCY}${p.costPrice.toFixed(2)}</div>` : ''}
+                        <div class="stock ${stockClass}">📊 ${stockLabel}</div>
+                        ${isAdmin ? `<div style="font-size:11px;color:#7f8c8d;">Last: ${CURRENCY}${p.lastPrice.toFixed(2)}</div>` : ''}
+                        <button onclick="editProduct('${p.id}')" style="background:#00a86b;margin-top:10px;padding:5px 15px;font-size:12px;">✏️ Edit</button>
+                    </div>
+                `;
+            }).join('');
+            
+            performSearch();
+        }
+
+        function renderProductTable() {
+            const tbody = document.getElementById('productTableBody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = products.map(p => `
+                <tr>
+                    <td>${p.image ? `<img src="${p.image}" alt="${p.name}" class="table-image">` : '📦'}</td>
+                    <td><strong>${p.name}</strong></td>
+                    <td>${p.sku || '-'}</td>
+                    <td>${p.category || '-'}</td>
+                    <td>${CURRENCY}${p.costPrice.toFixed(2)}</td>
+                    <td>${CURRENCY}${p.sellingPrice.toFixed(2)}</td>
+                    <td>${CURRENCY}${p.lastPrice.toFixed(2)}</td>
+                    <td style="color: ${p.quantity < 5 ? '#e74c3c' : '#00a86b'}; font-weight:600;">${p.quantity}</td>
+                    <td>
+                        <button onclick="editProduct('${p.id}')" style="background:#00a86b;padding:5px 10px;font-size:12px;">✏️</button>
+                        <button onclick="deleteProduct('${p.id}')" style="background:#e74c3c;padding:5px 10px;font-size:12px;">🗑️</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function populateSaleSelect() {
+            const select = document.getElementById('saleProduct');
+            if (!select) return;
+            
+            select.innerHTML = '<option value="">Select Product</option>' + 
+                products.map(p => `<option value="${p.id}">${p.name} (${p.quantity} in stock) ${p.sku ? '- ' + p.sku : ''}</option>`).join('');
+        }
+
+        function renderSalesTable() {
+            const tbody = document.getElementById('salesTableBody');
+            if (!tbody) return;
+            
+            const sortedSales = [...sales].reverse().slice(0, 50);
+            tbody.innerHTML = sortedSales.map(s => {
+                const product = products.find(p => p.id === s.productId);
+                return `
+                    <tr>
+                        <td>${new Date(s.date).toLocaleDateString()}</td>
+                        <td>${product ? product.name : 'Deleted'}</td>
+                        <td>${s.quantity}</td>
+                        <td>${CURRENCY}${s.price.toFixed(2)}</td>
+                        <td>${CURRENCY}${(s.quantity * s.price).toFixed(2)}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // ============================================
+        // ===== SALES =====
+        // ============================================
+        async function recordSale(e) {
+            e.preventDefault();
+            
+            const productId = document.getElementById('saleProduct').value;
+            const quantity = parseInt(document.getElementById('saleQuantity').value);
+            const overridePrice = parseFloat(document.getElementById('salePrice').value);
+            
+            if (!productId || !quantity) {
+                alert('⚠️ Please select product and enter quantity');
+                return;
+            }
+            
+            const product = products.find(p => p.id === productId);
+            if (!product) {
+                alert('⚠️ Product not found');
+                return;
+            }
+            
+            const price = overridePrice > 0 ? overridePrice : product.sellingPrice;
+            
+            if (product.quantity < quantity) {
+                alert(`⚠️ Not enough stock! Available: ${product.quantity}`);
+                return;
+            }
+            
+            product.quantity -= quantity;
+            
+            sales.push({
+                id: Date.now().toString(),
+                productId: productId,
+                quantity: quantity,
+                price: price,
+                date: new Date().toISOString()
+            });
+            
+            saveToLocalStorage();
+            if (supabaseUrl !== "YOUR_SUPABASE_URL" && supabaseKey !== "YOUR_SUPABASE_ANON_KEY") {
+                await saveToSupabase();
+            }
+            
+            document.getElementById('saleQuantity').value = '';
+            document.getElementById('salePrice').value = '';
+            document.getElementById('saleSummary').classList.remove('show');
+            
+            renderAll();
+            alert(`✅ Sale recorded successfully!\n\nProduct: ${product.name}\nQuantity: ${quantity}\nUnit Price: ${CURRENCY}${price.toFixed(2)}\nTotal: ${CURRENCY}${(price * quantity).toFixed(2)}`);
+        }
+
+        // ============================================
+        // ===== 📈 REPORTS WITH YEARLY OPTION =====
+        // ============================================
+        function generateReport(period, btnElement) {
+            const now = new Date();
+            let startDate;
+            let periodName;
+            let isYearly = false;
+            
+            document.querySelectorAll('.report-btn').forEach(b => b.classList.remove('active'));
+            if (btnElement) {
+                btnElement.classList.add('active');
+            }
+            
+            if (period === 'daily') {
+                startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                periodName = 'Today';
+            } else if (period === 'weekly') {
+                const day = now.getDay();
+                startDate = new Date(now);
+                startDate.setDate(now.getDate() - day);
+                startDate.setHours(0,0,0,0);
+                periodName = 'This Week';
+            } else if (period === 'monthly') {
+                startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                periodName = 'This Month';
+            } else if (period === 'yearly') {
+                startDate = new Date(now.getFullYear(), 0, 1);
+                periodName = 'Yearly Overview';
+                isYearly = true;
+            }
+            
+            if (isYearly) {
+                generateYearlyReport(startDate, now);
+                return;
+            }
+            
+            generateStandardReport(startDate, periodName);
+        }
+
+        function generateStandardReport(startDate, periodName) {
+            const filteredSales = sales.filter(s => new Date(s.date) >= startDate);
+            const totalRevenue = filteredSales.reduce((sum, s) => sum + (s.quantity * s.price), 0);
+            const totalItems = filteredSales.reduce((sum, s) => sum + s.quantity, 0);
+            
+            const productSales = {};
+            filteredSales.forEach(s => {
+                if (!productSales[s.productId]) {
+                    productSales[s.productId] = { quantity: 0, revenue: 0 };
+                }
+                productSales[s.productId].quantity += s.quantity;
+                productSales[s.productId].revenue += s.quantity * s.price;
+            });
+            
+            let reportHTML = `
+                <h3>📊 ${periodName} Report</h3>
+                <p style="color:#4a6fa5;margin-bottom:10px;">
+                    ${new Date(startDate).toLocaleDateString()} - ${new Date().toLocaleDateString()}
+                </p>
+                <div class="report-summary">
+                    <div class="stat-card">
+                        <h3>Total Revenue</h3>
+                        <p>${CURRENCY}${totalRevenue.toFixed(2)}</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Items Sold</h3>
+                        <p>${totalItems}</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Transactions</h3>
+                        <p>${filteredSales.length}</p>
+                    </div>
+                </div>
+                <h4 style="color:#0052d4;">📈 Sales by Product</h4>
+                ${filteredSales.length > 0 ? `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity Sold</th>
+                            <th>Revenue (${CURRENCY})</th>
+                            <th>% of Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${Object.entries(productSales).map(([id, data]) => {
+                            const product = products.find(p => p.id === id);
+                            const percentage = totalRevenue > 0 ? (data.revenue / totalRevenue * 100).toFixed(1) : 0;
+                            return `
+                                <tr>
+                                    <td>${product ? product.name : 'Deleted'}</td>
+                                    <td>${data.quantity}</td>
+                                    <td>${CURRENCY}${data.revenue.toFixed(2)}</td>
+                                    <td>${percentage}%</td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+                ` : `<p style="color:#7f8c8d;padding:20px;text-align:center;">No sales recorded for this period</p>`}
+            `;
+            
+            document.getElementById('reportOutput').innerHTML = reportHTML;
+        }
+
+        // ============================================
+        // ===== 📈 YEARLY REPORT FUNCTION =====
+        // ============================================
+        function generateYearlyReport(startDate, endDate) {
+            const year = startDate.getFullYear();
+            const filteredSales = sales.filter(s => {
+                const saleDate = new Date(s.date);
+                return saleDate >= startDate && saleDate <= endDate;
+            });
+            
+            const totalRevenue = filteredSales.reduce((sum, s) => sum + (s.quantity * s.price), 0);
+            const totalItems = filteredSales.reduce((sum, s) => sum + s.quantity, 0);
+            const totalTransactions = filteredSales.length;
+            
+            const monthlyData = {};
+            MONTHS.forEach((month, index) => {
+                monthlyData[index] = {
+                    name: month,
+                    revenue: 0,
+                    items: 0,
+                    transactions: 0
+                };
+            });
+            
+            filteredSales.forEach(s => {
+                const saleDate = new Date(s.date);
+                const month = saleDate.getMonth();
+                monthlyData[month].revenue += s.quantity * s.price;
+                monthlyData[month].items += s.quantity;
+                monthlyData[month].transactions += 1;
+            });
+            
+            const productSales = {};
+            filteredSales.forEach(s => {
+                if (!productSales[s.productId]) {
+                    productSales[s.productId] = { quantity: 0, revenue: 0 };
+                }
+                productSales[s.productId].quantity += s.quantity;
+                productSales[s.productId].revenue += s.quantity * s.price;
+            });
+            
+            let reportHTML = `
+                <h3>📈 Yearly Report - ${year}</h3>
+                <p style="color:#4a6fa5;margin-bottom:10px;">
+                    January 1, ${year} - December 31, ${year}
+                </p>
+                <div class="report-summary">
+                    <div class="stat-card">
+                        <h3>Total Revenue</h3>
+                        <p>${CURRENCY}${totalRevenue.toFixed(2)}</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Items Sold</h3>
+                        <p>${totalItems}</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Transactions</h3>
+                        <p>${totalTransactions}</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Average Monthly Revenue</h3>
+                        <p>${CURRENCY}${(totalRevenue / 12).toFixed(2)}</p>
+                    </div>
+                </div>
+                
+                <div class="monthly-breakdown">
+                    <h4>📅 Monthly Breakdown</h4>
+                    <div class="month-grid">
+                        ${Object.values(monthlyData).map(month => {
+                            const hasSales = month.transactions > 0;
+                            return `
+                                <div class="month-card ${hasSales ? '' : 'no-sales'}">
+                                    <div class="month-name">${month.name}</div>
+                                    <div class="month-revenue">${hasSales ? CURRENCY + month.revenue.toFixed(2) : 'No sales'}</div>
+                                    <div class="month-items">📦 ${month.items} items</div>
+                                    <div class="month-transactions">🔄 ${month.transactions} transactions</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+                
+                <h4 style="color:#0052d4;margin-top:20px;">📈 Top Selling Products (Yearly)</h4>
+                ${filteredSales.length > 0 ? `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity Sold</th>
+                            <th>Revenue (${CURRENCY})</th>
+                            <th>% of Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${Object.entries(productSales)
+                            .sort((a, b) => b[1].revenue - a[1].revenue)
+                            .map(([id, data]) => {
+                                const product = products.find(p => p.id === id);
+                                const percentage = totalRevenue > 0 ? (data.revenue / totalRevenue * 100).toFixed(1) : 0;
+                                return `
+                                    <tr>
+                                        <td>${product ? product.name : 'Deleted'}</td>
+                                        <td>${data.quantity}</td>
+                                        <td>${CURRENCY}${data.revenue.toFixed(2)}</td>
+                                        <td>${percentage}%</td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                    </tbody>
+                </table>
+                ` : `<p style="color:#7f8c8d;padding:20px;text-align:center;">No sales recorded for this year</p>`}
+            `;
+            
+            document.getElementById('reportOutput').innerHTML = reportHTML;
+        }
+
+        // ============================================
+        // ===== STATS =====
+        // ============================================
+        function updateStats() {
+            document.getElementById('totalProducts').textContent = products.length;
+            const totalValue = products.reduce((sum, p) => sum + (p.quantity * p.costPrice), 0);
+            document.getElementById('totalValue').textContent = `${CURRENCY}${totalValue.toFixed(2)}`;
+            
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const todaySales = sales.filter(s => new Date(s.date) >= today);
+            const todayRevenue = todaySales.reduce((sum, s) => sum + (s.quantity * s.price), 0);
+            document.getElementById('todaySales').textContent = `${CURRENCY}${todayRevenue.toFixed(2)}`;
+            
+            const lowStock = products.filter(p => p.quantity < 5).length;
+            document.getElementById('lowStock').textContent = lowStock;
+        }
+
+        // ============================================
+        // ===== TABS =====
+        // ============================================
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`.tab-btn[onclick="showTab('${tabId}')"]`).classList.add('active');
+            
+            if (tabId === 'dashboard') {
+                setTimeout(() => {
+                    document.getElementById('quickSearch').focus();
+                }, 100);
+            }
+        }
+
+        // ============================================
+        // ===== ROLE TOGGLE =====
+        // ============================================
+        function toggleRole() {
+            isAdmin = !isAdmin;
+            document.getElementById('userRole').textContent = isAdmin ? 'Admin' : 'Employee';
+            document.getElementById('userRole').style.background = isAdmin ? '#e74c3c' : '#0052d4';
+            
+            renderProductGrid();
+            renderProductTable();
+            
+            if (isAdmin) {
+                alert('🔐 Admin mode activated - You can now see cost prices and edit products');
+            } else {
+                alert('👤 Employee mode - Only showing selling prices');
+            }
+        }
+
+        // ============================================
+        // ===== KEYBOARD SHORTCUTS =====
+        // ============================================
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                e.preventDefault();
+                const searchInput = document.getElementById('quickSearch');
+                if (searchInput) {
+                    searchInput.focus();
+                    searchInput.select();
+                }
+            }
+            if (e.key === 'Escape') {
+                clearSearch();
+            }
+        });
+
+        // ============================================
+        // ===== AUTO-RUN =====
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            init();
+        });
+    </script>
+</body>
+</html>
