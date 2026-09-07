@@ -1101,6 +1101,7 @@
                     <button onclick="toggleRole()" style="background:#0052d4;">Switch to Admin</button>
                 </div>
                 <button onclick="syncToCloud()" class="btn-success">☁️ Sync Now</button>
+                <button onclick="testSupabaseConnection()" style="background:#8e44ad;">🔌 Test Connection</button>
             </div>
         </header>
 
@@ -1332,8 +1333,12 @@
         // ============================================
         // ===== 🗄️ SUPABASE CONFIGURATION =====
         // ============================================
+        // IMPORTANT: Replace these with YOUR actual Supabase credentials
+        // You can find these in your Supabase project settings under API
+        
+        // Get these from: https://supabase.com/dashboard/project/YOUR_PROJECT_ID/settings/api
         const supabaseUrl = "https://wwzqkprdukzfhgwfhyoy.supabase.co";
-        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3enFrcHJkdWt6Zmhnd2ZoeW95Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDI5MjU2ODUsImV4cCI6MjAxODUwMTY4NX0.3JaKnalZiiiAVZquuU4UvqMGY0Rygg";
+        const supabaseKey = "sb_publishable_iiiAVZquuU4UvqMGY0Rygg_3JaKnalZ";
         
         // Initialize Supabase client
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
@@ -1374,6 +1379,44 @@
         }
 
         // ============================================
+        // ===== TEST SUPABASE CONNECTION =====
+        // ============================================
+        async function testSupabaseConnection() {
+            showLoading(true);
+            try {
+                // Try to get the list of tables
+                const { data, error } = await supabaseClient
+                    .from('products')
+                    .select('*')
+                    .limit(1);
+                
+                if (error) {
+                    console.error('Connection test failed:', error);
+                    alert('❌ Connection failed!\n\n' + 
+                          'Error: ' + error.message + '\n' +
+                          'Status: ' + error.status + '\n\n' +
+                          'Please check:\n' +
+                          '1. Your Supabase URL and API key are correct\n' +
+                          '2. The "products" table exists\n' +
+                          '3. RLS policies allow access');
+                    updateSupabaseStatus(false);
+                } else {
+                    console.log('Connection test successful!', data);
+                    alert('✅ Connection successful!\n\n' +
+                          'Found ' + (data ? data.length : 0) + ' products in the database.\n' +
+                          'Your Supabase is working correctly!');
+                    updateSupabaseStatus(true);
+                }
+            } catch (error) {
+                console.error('Connection test error:', error);
+                alert('❌ Connection error!\n\n' + error.message);
+                updateSupabaseStatus(false);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // ============================================
         // ===== SUPABASE DATA OPERATIONS =====
         // ============================================
         
@@ -1390,11 +1433,23 @@
                 }
                 
                 if (data && data.length > 0) {
-                    products = data;
+                    // Convert snake_case to camelCase for the app
+                    products = data.map(p => ({
+                        id: p.id,
+                        name: p.name,
+                        sku: p.sku || '',
+                        category: p.category || '',
+                        costPrice: p.costprice || 0,
+                        sellingPrice: p.sellingprice || 0,
+                        lastPrice: p.lastprice || 0,
+                        quantity: p.quantity || 0,
+                        image: p.image || '',
+                        created_at: p.created_at || new Date().toISOString()
+                    }));
                     console.log('✅ Products loaded from Supabase:', products.length);
                     return true;
                 } else {
-                    console.log('No products found in Supabase, using local storage');
+                    console.log('No products found in Supabase');
                     return false;
                 }
             } catch (error) {
@@ -1416,11 +1471,18 @@
                 }
                 
                 if (data && data.length > 0) {
-                    sales = data;
+                    // Convert snake_case to camelCase for the app
+                    sales = data.map(s => ({
+                        id: s.id,
+                        productId: s.productid,
+                        quantity: s.quantity || 0,
+                        price: s.price || 0,
+                        date: s.date || new Date().toISOString()
+                    }));
                     console.log('✅ Sales loaded from Supabase:', sales.length);
                     return true;
                 } else {
-                    console.log('No sales found in Supabase, using local storage');
+                    console.log('No sales found in Supabase');
                     return false;
                 }
             } catch (error) {
@@ -1436,7 +1498,7 @@
                 const productsLoaded = await loadProductsFromSupabase();
                 const salesLoaded = await loadSalesFromSupabase();
                 
-                // If no data in Supabase, load from local storage
+                // If no data in Supabase or error, load from local storage
                 if (!productsLoaded || !salesLoaded) {
                     loadFromLocalStorage();
                 }
@@ -1571,7 +1633,11 @@
             if (result) {
                 alert('☁️ Data synced to Supabase successfully!');
             } else {
-                alert('⚠️ Failed to sync data. Please check:\n1. Your Supabase connection\n2. Table names: "products" and "sales"\n3. Column names match the code');
+                alert('⚠️ Failed to sync data. Please check:\n' +
+                      '1. Click "Test Connection" to verify your Supabase credentials\n' +
+                      '2. Make sure the "products" and "sales" tables exist\n' +
+                      '3. Check that RLS policies allow insert/delete operations\n\n' +
+                      'Data is still saved locally in your browser.');
             }
         }
 
@@ -1949,7 +2015,7 @@
             if (synced) {
                 alert('✅ Product saved to Supabase successfully!');
             } else {
-                alert('✅ Product saved locally but failed to sync to Supabase. Click "Sync Now" to try again.');
+                alert('✅ Product saved locally but failed to sync to Supabase. Click "Test Connection" to diagnose.');
             }
             
             document.getElementById('imagePreview').classList.remove('show');
@@ -2151,7 +2217,7 @@
             if (synced) {
                 alert(`✅ Sale recorded and synced to Supabase!\n\nProduct: ${product.name}\nQuantity: ${quantity}\nUnit Price: ${CURRENCY}${price.toFixed(2)}\nTotal: ${CURRENCY}${(price * quantity).toFixed(2)}`);
             } else {
-                alert(`✅ Sale recorded locally but failed to sync to Supabase.\n\nProduct: ${product.name}\nQuantity: ${quantity}\nTotal: ${CURRENCY}${(price * quantity).toFixed(2)}\n\nClick "Sync Now" to sync to cloud.`);
+                alert(`✅ Sale recorded locally but failed to sync.\n\nProduct: ${product.name}\nQuantity: ${quantity}\nTotal: ${CURRENCY}${(price * quantity).toFixed(2)}\n\nClick "Test Connection" to diagnose.`);
             }
         }
 
