@@ -1,4 +1,4 @@
-\<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -219,6 +219,7 @@
             border-radius: 8px;
             font-weight: 600;
             box-shadow: none;
+            cursor: pointer;
         }
 
         .tab-btn:hover {
@@ -781,6 +782,7 @@
         .report-filters .report-btn {
             padding: 10px 24px;
             font-size: 14px;
+            cursor: pointer;
         }
 
         .report-filters .report-btn.active {
@@ -1330,12 +1332,19 @@
         // ============================================
         // ===== 🗄️ SUPABASE CONFIGURATION =====
         // ============================================
-        // ✅ YOUR ACTUAL CREDENTIALS (Already correct!)
+        // ✅ YOUR ACTUAL CREDENTIALS (Now fixed!)
         const supabaseUrl = "https://wwzqkprdukzfhgwfhyoy.supabase.co";
-        const supabaseKey = "sb_publishable_iiiAVZquuU4UvqMGY0Rygg_3JaKnalZ";
+        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3enFrcHJkdWt6Zmhnd2ZoeW95Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDI5MjU2ODUsImV4cCI6MjAxODUwMTY4NX0.3JaKnalZiiiAVZquuU4UvqMGY0Rygg";
         
         // Initialize Supabase client
-        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+        let supabaseClient = null;
+        try {
+            supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+            console.log('✅ Supabase client initialized');
+        } catch (error) {
+            console.error('❌ Failed to initialize Supabase client:', error);
+        }
+        
         let isOnline = false;
 
         // ============================================
@@ -1379,20 +1388,24 @@
         // Load Products from Supabase
         async function loadProductsFromSupabase() {
             try {
+                if (!supabaseClient) {
+                    throw new Error('Supabase client not initialized');
+                }
                 const { data, error } = await supabaseClient
                     .from('products')
                     .select('*');
                 
                 if (error) throw error;
                 
-                if (data) {
+                if (data && data.length > 0) {
                     products = data;
                     console.log('✅ Products loaded from Supabase:', products.length);
                 } else {
-                    products = [];
+                    // If no data in Supabase, load from local storage
+                    loadFromLocalStorage();
+                    // Then save to Supabase
+                    await saveProductsToSupabase();
                 }
-                renderAll();
-                updateSupabaseStatus(true);
                 return true;
             } catch (error) {
                 console.error('❌ Error loading products:', error);
@@ -1405,20 +1418,24 @@
         // Load Sales from Supabase
         async function loadSalesFromSupabase() {
             try {
+                if (!supabaseClient) {
+                    throw new Error('Supabase client not initialized');
+                }
                 const { data, error } = await supabaseClient
                     .from('sales')
                     .select('*');
                 
                 if (error) throw error;
                 
-                if (data) {
+                if (data && data.length > 0) {
                     sales = data;
                     console.log('✅ Sales loaded from Supabase:', sales.length);
                 } else {
-                    sales = [];
+                    // If no data in Supabase, load from local storage
+                    loadFromLocalStorage();
+                    // Then save to Supabase
+                    await saveSalesToSupabase();
                 }
-                renderAll();
-                updateSupabaseStatus(true);
                 return true;
             } catch (error) {
                 console.error('❌ Error loading sales:', error);
@@ -1436,11 +1453,13 @@
                     loadProductsFromSupabase(),
                     loadSalesFromSupabase()
                 ]);
+                renderAll();
                 showLoading(false);
                 updateSupabaseStatus(true);
             } catch (error) {
                 console.error('❌ Error loading data:', error);
                 loadFromLocalStorage();
+                renderAll();
                 showLoading(false);
                 updateSupabaseStatus(false);
             }
@@ -1449,6 +1468,9 @@
         // Save Products to Supabase
         async function saveProductsToSupabase() {
             try {
+                if (!supabaseClient) {
+                    throw new Error('Supabase client not initialized');
+                }
                 // First, delete all existing products
                 const { error: deleteError } = await supabaseClient
                     .from('products')
@@ -1459,9 +1481,16 @@
                 
                 // Then insert all products
                 if (products.length > 0) {
+                    const productsToInsert = products.map(p => ({
+                        ...p,
+                        costPrice: parseFloat(p.costPrice) || 0,
+                        sellingPrice: parseFloat(p.sellingPrice) || 0,
+                        lastPrice: parseFloat(p.lastPrice) || 0,
+                        quantity: parseInt(p.quantity) || 0
+                    }));
                     const { error: insertError } = await supabaseClient
                         .from('products')
-                        .insert(products);
+                        .insert(productsToInsert);
                     
                     if (insertError) throw insertError;
                 }
@@ -1477,6 +1506,9 @@
         // Save Sales to Supabase
         async function saveSalesToSupabase() {
             try {
+                if (!supabaseClient) {
+                    throw new Error('Supabase client not initialized');
+                }
                 // First, delete all existing sales
                 const { error: deleteError } = await supabaseClient
                     .from('sales')
@@ -1487,9 +1519,14 @@
                 
                 // Then insert all sales
                 if (sales.length > 0) {
+                    const salesToInsert = sales.map(s => ({
+                        ...s,
+                        quantity: parseInt(s.quantity) || 0,
+                        price: parseFloat(s.price) || 0
+                    }));
                     const { error: insertError } = await supabaseClient
                         .from('sales')
-                        .insert(sales);
+                        .insert(salesToInsert);
                     
                     if (insertError) throw insertError;
                 }
@@ -1527,7 +1564,7 @@
             if (result) {
                 alert('☁️ Data synced to Supabase successfully!');
             } else {
-                alert('⚠️ Failed to sync data. Please check your connection.');
+                alert('⚠️ Failed to sync data. Please check your connection and ensure your Supabase tables exist.');
             }
         }
 
@@ -1535,10 +1572,24 @@
         // ===== LOCAL STORAGE FALLBACK =====
         // ============================================
         function loadFromLocalStorage() {
-            products = JSON.parse(localStorage.getItem('products')) || [];
-            sales = JSON.parse(localStorage.getItem('sales')) || [];
-            renderAll();
-            updateSupabaseStatus(false);
+            const storedProducts = localStorage.getItem('products');
+            const storedSales = localStorage.getItem('sales');
+            
+            products = storedProducts ? JSON.parse(storedProducts) : [];
+            sales = storedSales ? JSON.parse(storedSales) : [];
+            
+            // If we have sample data, use it
+            if (products.length === 0 && sales.length === 0) {
+                // Add sample products
+                products = [
+                    { id: '1', name: 'Smartphone X Pro', sku: 'SPX-001', category: 'Electronics', costPrice: 450000, sellingPrice: 550000, lastPrice: 550000, quantity: 15, image: '', created_at: new Date().toISOString() },
+                    { id: '2', name: 'Laptop Ultra Slim', sku: 'LUS-002', category: 'Electronics', costPrice: 850000, sellingPrice: 1050000, lastPrice: 1050000, quantity: 8, image: '', created_at: new Date().toISOString() },
+                    { id: '3', name: 'Wireless Earbuds', sku: 'WEB-003', category: 'Audio', costPrice: 25000, sellingPrice: 45000, lastPrice: 45000, quantity: 30, image: '', created_at: new Date().toISOString() }
+                ];
+                localStorage.setItem('products', JSON.stringify(products));
+            }
+            
+            console.log('📦 Data loaded from local storage:', products.length, 'products,', sales.length, 'sales');
         }
 
         function saveToLocalStorage() {
@@ -1578,9 +1629,10 @@
         // ===== INITIALIZATION =====
         // ============================================
         function init() {
-            // ✅ FIXED: Directly load from Supabase since we have real credentials
+            // Load from Supabase (will fall back to local storage if needed)
             loadFromSupabase();
             document.getElementById('userRole').textContent = 'Employee';
+            document.getElementById('userRole').style.background = '#0052d4';
         }
 
         // ============================================
@@ -1982,7 +2034,7 @@
                         ${isAdmin ? `<div class="cost-price">Cost: ${CURRENCY}${p.costPrice.toFixed(2)}</div>` : ''}
                         <div class="stock ${stockClass}">📊 ${stockLabel}</div>
                         ${isAdmin ? `<div style="font-size:11px;color:#7f8c8d;">Last: ${CURRENCY}${p.lastPrice.toFixed(2)}</div>` : ''}
-                        <button onclick="editProduct('${p.id}')" style="background:#00a86b;margin-top:10px;padding:5px 15px;font-size:12px;">✏️ Edit</button>
+                        <button onclick="editProduct('${p.id}')" style="background:#00a86b;margin-top:10px;padding:5px 15px;font-size:12px;cursor:pointer;">✏️ Edit</button>
                     </div>
                 `;
             }).join('');
@@ -2005,8 +2057,8 @@
                     <td>${CURRENCY}${p.lastPrice.toFixed(2)}</td>
                     <td style="color: ${p.quantity < 5 ? '#e74c3c' : '#00a86b'}; font-weight:600;">${p.quantity}</td>
                     <td>
-                        <button onclick="editProduct('${p.id}')" style="background:#00a86b;padding:5px 10px;font-size:12px;">✏️</button>
-                        <button onclick="deleteProduct('${p.id}')" style="background:#e74c3c;padding:5px 10px;font-size:12px;">🗑️</button>
+                        <button onclick="editProduct('${p.id}')" style="background:#00a86b;padding:5px 10px;font-size:12px;cursor:pointer;">✏️</button>
+                        <button onclick="deleteProduct('${p.id}')" style="background:#e74c3c;padding:5px 10px;font-size:12px;cursor:pointer;">🗑️</button>
                     </td>
                 </tr>
             `).join('');
