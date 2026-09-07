@@ -1332,19 +1332,11 @@
         // ============================================
         // ===== 🗄️ SUPABASE CONFIGURATION =====
         // ============================================
-        // ✅ YOUR ACTUAL CREDENTIALS (Now fixed!)
         const supabaseUrl = "https://wwzqkprdukzfhgwfhyoy.supabase.co";
         const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3enFrcHJkdWt6Zmhnd2ZoeW95Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDI5MjU2ODUsImV4cCI6MjAxODUwMTY4NX0.3JaKnalZiiiAVZquuU4UvqMGY0Rygg";
         
         // Initialize Supabase client
-        let supabaseClient = null;
-        try {
-            supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
-            console.log('✅ Supabase client initialized');
-        } catch (error) {
-            console.error('❌ Failed to initialize Supabase client:', error);
-        }
-        
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
         let isOnline = false;
 
         // ============================================
@@ -1388,29 +1380,25 @@
         // Load Products from Supabase
         async function loadProductsFromSupabase() {
             try {
-                if (!supabaseClient) {
-                    throw new Error('Supabase client not initialized');
-                }
                 const { data, error } = await supabaseClient
                     .from('products')
                     .select('*');
                 
-                if (error) throw error;
+                if (error) {
+                    console.error('Supabase error loading products:', error);
+                    throw error;
+                }
                 
                 if (data && data.length > 0) {
                     products = data;
                     console.log('✅ Products loaded from Supabase:', products.length);
+                    return true;
                 } else {
-                    // If no data in Supabase, load from local storage
-                    loadFromLocalStorage();
-                    // Then save to Supabase
-                    await saveProductsToSupabase();
+                    console.log('No products found in Supabase, using local storage');
+                    return false;
                 }
-                return true;
             } catch (error) {
-                console.error('❌ Error loading products:', error);
-                loadFromLocalStorage();
-                updateSupabaseStatus(false);
+                console.error('❌ Error loading products:', error.message);
                 return false;
             }
         }
@@ -1418,29 +1406,25 @@
         // Load Sales from Supabase
         async function loadSalesFromSupabase() {
             try {
-                if (!supabaseClient) {
-                    throw new Error('Supabase client not initialized');
-                }
                 const { data, error } = await supabaseClient
                     .from('sales')
                     .select('*');
                 
-                if (error) throw error;
+                if (error) {
+                    console.error('Supabase error loading sales:', error);
+                    throw error;
+                }
                 
                 if (data && data.length > 0) {
                     sales = data;
                     console.log('✅ Sales loaded from Supabase:', sales.length);
+                    return true;
                 } else {
-                    // If no data in Supabase, load from local storage
-                    loadFromLocalStorage();
-                    // Then save to Supabase
-                    await saveSalesToSupabase();
+                    console.log('No sales found in Supabase, using local storage');
+                    return false;
                 }
-                return true;
             } catch (error) {
-                console.error('❌ Error loading sales:', error);
-                loadFromLocalStorage();
-                updateSupabaseStatus(false);
+                console.error('❌ Error loading sales:', error.message);
                 return false;
             }
         }
@@ -1449,10 +1433,14 @@
         async function loadFromSupabase() {
             showLoading(true);
             try {
-                await Promise.all([
-                    loadProductsFromSupabase(),
-                    loadSalesFromSupabase()
-                ]);
+                const productsLoaded = await loadProductsFromSupabase();
+                const salesLoaded = await loadSalesFromSupabase();
+                
+                // If no data in Supabase, load from local storage
+                if (!productsLoaded || !salesLoaded) {
+                    loadFromLocalStorage();
+                }
+                
                 renderAll();
                 showLoading(false);
                 updateSupabaseStatus(true);
@@ -1468,37 +1456,46 @@
         // Save Products to Supabase
         async function saveProductsToSupabase() {
             try {
-                if (!supabaseClient) {
-                    throw new Error('Supabase client not initialized');
-                }
                 // First, delete all existing products
                 const { error: deleteError } = await supabaseClient
                     .from('products')
                     .delete()
                     .neq('id', '');
                 
-                if (deleteError) throw deleteError;
+                if (deleteError) {
+                    console.error('Delete error:', deleteError);
+                    throw deleteError;
+                }
                 
                 // Then insert all products
                 if (products.length > 0) {
                     const productsToInsert = products.map(p => ({
-                        ...p,
-                        costPrice: parseFloat(p.costPrice) || 0,
-                        sellingPrice: parseFloat(p.sellingPrice) || 0,
-                        lastPrice: parseFloat(p.lastPrice) || 0,
-                        quantity: parseInt(p.quantity) || 0
+                        id: p.id,
+                        name: p.name,
+                        sku: p.sku || '',
+                        category: p.category || '',
+                        costprice: parseFloat(p.costPrice) || 0,
+                        sellingprice: parseFloat(p.sellingPrice) || 0,
+                        lastprice: parseFloat(p.lastPrice) || 0,
+                        quantity: parseInt(p.quantity) || 0,
+                        image: p.image || '',
+                        created_at: p.created_at || new Date().toISOString()
                     }));
+                    
                     const { error: insertError } = await supabaseClient
                         .from('products')
                         .insert(productsToInsert);
                     
-                    if (insertError) throw insertError;
+                    if (insertError) {
+                        console.error('Insert error:', insertError);
+                        throw insertError;
+                    }
                 }
                 
                 console.log('✅ Products saved to Supabase');
                 return true;
             } catch (error) {
-                console.error('❌ Error saving products:', error);
+                console.error('❌ Error saving products:', error.message);
                 return false;
             }
         }
@@ -1506,35 +1503,41 @@
         // Save Sales to Supabase
         async function saveSalesToSupabase() {
             try {
-                if (!supabaseClient) {
-                    throw new Error('Supabase client not initialized');
-                }
                 // First, delete all existing sales
                 const { error: deleteError } = await supabaseClient
                     .from('sales')
                     .delete()
                     .neq('id', '');
                 
-                if (deleteError) throw deleteError;
+                if (deleteError) {
+                    console.error('Delete error:', deleteError);
+                    throw deleteError;
+                }
                 
                 // Then insert all sales
                 if (sales.length > 0) {
                     const salesToInsert = sales.map(s => ({
-                        ...s,
+                        id: s.id,
+                        productid: s.productId,
                         quantity: parseInt(s.quantity) || 0,
-                        price: parseFloat(s.price) || 0
+                        price: parseFloat(s.price) || 0,
+                        date: s.date || new Date().toISOString()
                     }));
+                    
                     const { error: insertError } = await supabaseClient
                         .from('sales')
                         .insert(salesToInsert);
                     
-                    if (insertError) throw insertError;
+                    if (insertError) {
+                        console.error('Insert error:', insertError);
+                        throw insertError;
+                    }
                 }
                 
                 console.log('✅ Sales saved to Supabase');
                 return true;
             } catch (error) {
-                console.error('❌ Error saving sales:', error);
+                console.error('❌ Error saving sales:', error.message);
                 return false;
             }
         }
@@ -1543,13 +1546,17 @@
         async function saveToSupabase() {
             showLoading(true);
             try {
-                await Promise.all([
-                    saveProductsToSupabase(),
-                    saveSalesToSupabase()
-                ]);
+                const productsSaved = await saveProductsToSupabase();
+                const salesSaved = await saveSalesToSupabase();
+                
                 showLoading(false);
-                updateSupabaseStatus(true);
-                return true;
+                if (productsSaved && salesSaved) {
+                    updateSupabaseStatus(true);
+                    return true;
+                } else {
+                    updateSupabaseStatus(false);
+                    return false;
+                }
             } catch (error) {
                 console.error('❌ Error saving data:', error);
                 showLoading(false);
@@ -1564,7 +1571,7 @@
             if (result) {
                 alert('☁️ Data synced to Supabase successfully!');
             } else {
-                alert('⚠️ Failed to sync data. Please check your connection and ensure your Supabase tables exist.');
+                alert('⚠️ Failed to sync data. Please check:\n1. Your Supabase connection\n2. Table names: "products" and "sales"\n3. Column names match the code');
             }
         }
 
@@ -1578,9 +1585,8 @@
             products = storedProducts ? JSON.parse(storedProducts) : [];
             sales = storedSales ? JSON.parse(storedSales) : [];
             
-            // If we have sample data, use it
-            if (products.length === 0 && sales.length === 0) {
-                // Add sample products
+            // If no data, add sample products
+            if (products.length === 0) {
                 products = [
                     { id: '1', name: 'Smartphone X Pro', sku: 'SPX-001', category: 'Electronics', costPrice: 450000, sellingPrice: 550000, lastPrice: 550000, quantity: 15, image: '', created_at: new Date().toISOString() },
                     { id: '2', name: 'Laptop Ultra Slim', sku: 'LUS-002', category: 'Electronics', costPrice: 850000, sellingPrice: 1050000, lastPrice: 1050000, quantity: 8, image: '', created_at: new Date().toISOString() },
@@ -1629,7 +1635,6 @@
         // ===== INITIALIZATION =====
         // ============================================
         function init() {
-            // Load from Supabase (will fall back to local storage if needed)
             loadFromSupabase();
             document.getElementById('userRole').textContent = 'Employee';
             document.getElementById('userRole').style.background = '#0052d4';
@@ -1937,10 +1942,15 @@
             }
             
             saveToLocalStorage();
-            await saveToSupabase();
+            const synced = await saveToSupabase();
             clearForm();
             renderAll();
-            alert('✅ Product saved successfully!');
+            
+            if (synced) {
+                alert('✅ Product saved to Supabase successfully!');
+            } else {
+                alert('✅ Product saved locally but failed to sync to Supabase. Click "Sync Now" to try again.');
+            }
             
             document.getElementById('imagePreview').classList.remove('show');
             document.getElementById('imagePreview').src = '';
@@ -2130,14 +2140,19 @@
             });
             
             saveToLocalStorage();
-            await saveToSupabase();
+            const synced = await saveToSupabase();
             
             document.getElementById('saleQuantity').value = '';
             document.getElementById('salePrice').value = '';
             document.getElementById('saleSummary').classList.remove('show');
             
             renderAll();
-            alert(`✅ Sale recorded successfully!\n\nProduct: ${product.name}\nQuantity: ${quantity}\nUnit Price: ${CURRENCY}${price.toFixed(2)}\nTotal: ${CURRENCY}${(price * quantity).toFixed(2)}`);
+            
+            if (synced) {
+                alert(`✅ Sale recorded and synced to Supabase!\n\nProduct: ${product.name}\nQuantity: ${quantity}\nUnit Price: ${CURRENCY}${price.toFixed(2)}\nTotal: ${CURRENCY}${(price * quantity).toFixed(2)}`);
+            } else {
+                alert(`✅ Sale recorded locally but failed to sync to Supabase.\n\nProduct: ${product.name}\nQuantity: ${quantity}\nTotal: ${CURRENCY}${(price * quantity).toFixed(2)}\n\nClick "Sync Now" to sync to cloud.`);
+            }
         }
 
         // ============================================
