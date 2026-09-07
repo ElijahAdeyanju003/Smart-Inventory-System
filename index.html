@@ -1380,7 +1380,7 @@
         async function loadProductsFromSupabase() {
             try {
                 const { data, error } = await supabaseClient
-                    .from('product')
+                    .from('products')
                     .select('*');
                 
                 if (error) throw error;
