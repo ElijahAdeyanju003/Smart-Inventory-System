@@ -828,13 +828,51 @@
             display: none !important;
         }
 
-        /* ===== FORM STYLES ===== */
+        /* ===== FORM STYLES - ENTIRE FORM HIDDEN FROM EMPLOYEES ===== */
         .form-section {
             background: #f0f7ff;
             padding: 15px;
             border-radius: 12px;
             margin-bottom: 15px;
             border: 1px solid #d6e4f5;
+        }
+
+        /* Hide the entire Add/Edit form from employees */
+        body.employee-mode .form-section {
+            display: none !important;
+        }
+
+        /* Show a message to employees instead */
+        .employee-message {
+            display: none;
+            background: #f0f7ff;
+            padding: 30px 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #d6e4f5;
+            text-align: center;
+        }
+
+        body.employee-mode .employee-message {
+            display: block;
+        }
+
+        .employee-message .lock-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .employee-message h3 {
+            color: #0052d4;
+            font-size: clamp(18px, 2.5vw, 22px);
+            margin-bottom: 10px;
+        }
+
+        .employee-message p {
+            color: #4a6fa5;
+            font-size: clamp(14px, 1.6vw, 16px);
+            max-width: 500px;
+            margin: 0 auto;
         }
 
         .form-section h2 {
@@ -1622,7 +1660,16 @@
 
         <!-- ===== PRODUCTS TAB ===== -->
         <div id="products" class="tab-content">
-            <div class="form-section">
+            <!-- ===== EMPLOYEE MESSAGE (Shown only to employees) ===== -->
+            <div class="employee-message">
+                <div class="lock-icon">🔒</div>
+                <h3>Admin Access Required</h3>
+                <p>Only administrators can add, edit, or delete products. Please request admin access from your system administrator.</p>
+                <button onclick="requestAdminAccess()" style="margin-top:15px;background:#0052d4;padding:10px 24px;">🔐 Switch to Admin</button>
+            </div>
+
+            <!-- ===== ADD/EDIT PRODUCT FORM (Hidden from employees) ===== -->
+            <div class="form-section admin-only">
                 <h2>📝 Add / Edit Product</h2>
                 <form id="productForm" onsubmit="saveProduct(event)">
                     <input type="hidden" id="productId">
@@ -1632,10 +1679,7 @@
                         <input type="text" id="productCategory" placeholder="Category">
                     </div>
                     <div class="form-row">
-                        <!-- Cost Price - Admin Only -->
-                        <div class="admin-only">
-                            <input type="number" id="costPrice" placeholder="Cost Price (₦)" step="0.01" inputmode="decimal">
-                        </div>
+                        <input type="number" id="costPrice" placeholder="Cost Price (₦)" step="0.01" inputmode="decimal">
                         <input type="number" id="sellingPrice" placeholder="Selling Price (₦)" step="0.01" required inputmode="decimal">
                         <input type="number" id="lastPrice" placeholder="Last Price (₦)" step="0.01" inputmode="decimal">
                     </div>
@@ -1656,6 +1700,7 @@
                 </form>
             </div>
 
+            <!-- ===== PRODUCT TABLE ===== -->
             <div class="table-wrapper">
                 <table id="productTable">
                     <thead>
@@ -2464,10 +2509,10 @@
         function saveProduct(e) {
             e.preventDefault();
             
-            // Check if user is admin
+            // ✅ CHECK: Is user an admin?
             if (!isAdmin) {
                 alert('⚠️ Only admins can add or edit products. Please request admin access.');
-                return;
+                return; // Stops the function
             }
             
             const id = document.getElementById('productId').value;
