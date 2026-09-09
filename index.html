@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>SMART TECHNOLOGY - Digital Information Hub</title>
     
     <!-- ===== SUPABASE SDK ===== -->
@@ -16,18 +16,28 @@
             box-sizing: border-box;
         }
 
+        html {
+            font-size: 16px;
+            -webkit-text-size-adjust: 100%;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, 'Segoe UI', Roboto, Tahoma, Geneva, Verdana, sans-serif;
             background: #f0f4f8;
-            padding: 20px;
+            padding: 10px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
         }
 
         .container {
             max-width: 1400px;
+            width: 100%;
             margin: 0 auto;
             background: #ffffff;
             border-radius: 16px;
-            padding: 20px;
+            padding: 15px;
             box-shadow: 0 4px 20px rgba(0, 82, 212, 0.15);
             border: 1px solid #e8edf5;
         }
@@ -37,45 +47,47 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 20px;
+            padding: 12px 15px;
             border-bottom: 3px solid #0052d4;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             flex-wrap: wrap;
             background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
-            padding: 15px 20px;
             border-radius: 12px;
+            gap: 10px;
         }
 
         .header-left {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
+            flex: 1;
+            min-width: 200px;
         }
 
         .logo-container {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .logo-icon {
-            width: 60px;
-            height: 60px;
+            width: 45px;
+            height: 45px;
             background: linear-gradient(135deg, #0052d4, #0066ff);
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 28px;
+            font-size: 20px;
             font-weight: bold;
             box-shadow: 0 4px 12px rgba(0, 82, 212, 0.3);
-            position: relative;
+            flex-shrink: 0;
         }
 
         .logo-icon::after {
             content: 'ST';
-            font-size: 18px;
+            font-size: 14px;
             font-weight: 800;
             letter-spacing: 1px;
         }
@@ -83,21 +95,23 @@
         .logo-text {
             display: flex;
             flex-direction: column;
+            min-width: 0;
         }
 
         .logo-text .company-name {
-            font-size: 22px;
+            font-size: clamp(14px, 3vw, 22px);
             font-weight: 800;
             color: #0052d4;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             line-height: 1.2;
+            word-wrap: break-word;
         }
 
         .logo-text .company-tagline {
-            font-size: 12px;
+            font-size: clamp(9px, 1.5vw, 12px);
             color: #4a6fa5;
             font-weight: 500;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             text-transform: uppercase;
         }
 
@@ -108,45 +122,50 @@
         .header-right {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
+            flex: 1;
+            min-width: 200px;
+            justify-content: flex-end;
         }
 
         .user-badge {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
+            flex-wrap: wrap;
         }
 
         .user-badge span {
             background: #0052d4;
             color: white;
-            padding: 5px 18px;
+            padding: 4px 14px;
             border-radius: 20px;
-            font-size: 14px;
+            font-size: clamp(11px, 1.5vw, 14px);
             font-weight: 600;
         }
 
-        /* Supabase Status Indicator */
         .supabase-status {
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 12px;
+            gap: 5px;
+            font-size: clamp(10px, 1.3vw, 12px);
             color: #27ae60;
-            padding: 4px 12px;
+            padding: 3px 10px;
             background: #e8f8f0;
             border-radius: 20px;
             border: 1px solid #27ae60;
+            white-space: nowrap;
         }
 
         .supabase-status .dot {
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
             background: #27ae60;
             border-radius: 50%;
             display: inline-block;
             animation: pulse 1.5s infinite;
+            flex-shrink: 0;
         }
 
         @keyframes pulse {
@@ -170,19 +189,29 @@
             background: #0052d4;
             color: white;
             border: none;
-            padding: 8px 18px;
+            padding: 8px 14px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: clamp(12px, 1.5vw, 14px);
             font-weight: 600;
             transition: all 0.3s ease;
             box-shadow: 0 2px 8px rgba(0, 82, 212, 0.2);
+            touch-action: manipulation;
+            min-height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
         }
 
         button:hover {
             background: #003399;
             transform: translateY(-2px);
             box-shadow: 0 4px 16px rgba(0, 82, 212, 0.3);
+        }
+
+        button:active {
+            transform: scale(0.97);
         }
 
         .btn-success {
@@ -204,22 +233,30 @@
         /* ===== TABS ===== */
         .tabs {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 6px;
+            margin-bottom: 15px;
             flex-wrap: wrap;
             background: #f0f7ff;
-            padding: 8px;
+            padding: 6px;
             border-radius: 12px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .tab-btn {
             background: transparent;
             color: #4a6fa5;
-            padding: 10px 22px;
+            padding: 8px 14px;
             border-radius: 8px;
             font-weight: 600;
             box-shadow: none;
             cursor: pointer;
+            min-height: 36px;
+            font-size: clamp(11px, 1.4vw, 14px);
+            white-space: nowrap;
+            flex: 1;
+            min-width: 60px;
+            text-align: center;
         }
 
         .tab-btn:hover {
@@ -256,15 +293,15 @@
         /* ===== STATS GRID ===== */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
         }
 
         .stat-card {
             background: linear-gradient(135deg, #0052d4, #0066ff);
             color: white;
-            padding: 20px 25px;
+            padding: 15px 18px;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 82, 212, 0.25);
             transition: transform 0.3s ease;
@@ -290,56 +327,58 @@
         }
 
         .stat-card h3 {
-            font-size: 14px;
+            font-size: clamp(11px, 1.4vw, 14px);
             opacity: 0.9;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             font-weight: 500;
         }
 
         .stat-card p {
-            font-size: 28px;
+            font-size: clamp(20px, 4vw, 28px);
             font-weight: 700;
         }
 
         /* ===== SEARCH STYLES ===== */
         .search-section {
             background: #f0f7ff;
-            padding: 20px;
+            padding: 15px;
             border-radius: 12px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             border: 1px solid #d6e4f5;
         }
 
         .search-container {
             display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 8px;
+            margin-bottom: 12px;
             flex-wrap: wrap;
         }
 
         .search-input-wrapper {
             flex: 1;
             position: relative;
-            min-width: 200px;
+            min-width: 150px;
         }
 
         .search-icon {
             position: absolute;
-            left: 14px;
+            left: 12px;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 18px;
+            font-size: 16px;
             color: #4a6fa5;
         }
 
         .search-input-wrapper input {
             width: 100%;
-            padding: 12px 16px 12px 44px;
+            padding: 10px 14px 10px 38px;
             border: 2px solid #d6e4f5;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: clamp(14px, 1.6vw, 16px);
             transition: all 0.3s ease;
             background: white;
+            min-height: 44px;
+            -webkit-appearance: none;
         }
 
         .search-input-wrapper input:focus {
@@ -350,7 +389,7 @@
 
         .clear-btn {
             position: absolute;
-            right: 12px;
+            right: 10px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
@@ -361,6 +400,7 @@
             padding: 4px;
             display: none;
             box-shadow: none;
+            min-height: auto;
         }
 
         .clear-btn:hover {
@@ -371,14 +411,16 @@
 
         .search-btn {
             background: #0052d4;
-            padding: 12px 28px;
+            padding: 10px 20px;
             white-space: nowrap;
+            min-height: 44px;
         }
 
         .clear-all-btn {
             background: #e74c3c;
-            padding: 12px 20px;
+            padding: 10px 16px;
             white-space: nowrap;
+            min-height: 44px;
         }
 
         .clear-all-btn:hover {
@@ -387,34 +429,37 @@
 
         .search-filters {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             align-items: center;
             flex-wrap: wrap;
-            padding-top: 15px;
+            padding-top: 12px;
             border-top: 1px solid #d6e4f5;
         }
 
         .filter-group {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             flex-wrap: wrap;
         }
 
         .filter-group label {
-            font-size: 13px;
+            font-size: clamp(11px, 1.3vw, 13px);
             color: #4a6fa5;
             font-weight: 600;
         }
 
         .filter-group select,
         .filter-group input {
-            padding: 8px 12px;
+            padding: 6px 10px;
             border: 1px solid #d6e4f5;
             border-radius: 6px;
-            font-size: 13px;
+            font-size: clamp(12px, 1.3vw, 13px);
             background: white;
             color: #2c3e50;
+            min-height: 36px;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         .filter-group select:focus,
@@ -424,7 +469,7 @@
         }
 
         .price-filter {
-            width: 100px;
+            width: 80px;
         }
 
         .price-separator {
@@ -436,34 +481,35 @@
         .search-stats {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
             margin-left: auto;
+            flex-wrap: wrap;
         }
 
         .search-count {
-            font-size: 14px;
+            font-size: clamp(12px, 1.4vw, 14px);
             color: #0052d4;
             font-weight: 600;
         }
 
         .search-time {
-            font-size: 12px;
+            font-size: clamp(10px, 1.2vw, 12px);
             color: #7f8c8d;
         }
 
         /* ===== FILTER CHIPS ===== */
         .filter-chips {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             align-items: center;
             flex-wrap: wrap;
-            margin-top: 12px;
-            padding-top: 12px;
+            margin-top: 10px;
+            padding-top: 10px;
             border-top: 1px solid #d6e4f5;
         }
 
         .chip-label {
-            font-size: 13px;
+            font-size: clamp(11px, 1.3vw, 13px);
             color: #4a6fa5;
             font-weight: 600;
         }
@@ -471,14 +517,16 @@
         .chip {
             background: white;
             color: #0052d4;
-            padding: 4px 16px;
+            padding: 4px 12px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: clamp(10px, 1.2vw, 12px);
             cursor: pointer;
             border: 1px solid #0052d4;
             transition: all 0.3s ease;
             box-shadow: none;
             font-weight: 500;
+            min-height: 30px;
+            white-space: nowrap;
         }
 
         .chip:hover {
@@ -497,14 +545,14 @@
         /* ===== PRODUCT GRID ===== */
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 15px;
         }
 
         .product-card {
             border: 1px solid #e8edf5;
             border-radius: 12px;
-            padding: 15px;
+            padding: 12px;
             text-align: center;
             transition: all 0.3s ease;
             background: white;
@@ -519,7 +567,7 @@
 
         .product-card .product-image-container {
             width: 100%;
-            height: 180px;
+            height: 140px;
             border-radius: 8px;
             overflow: hidden;
             background: #f0f7ff;
@@ -538,55 +586,56 @@
         }
 
         .product-card .no-image {
-            height: 180px;
+            height: 140px;
             background: #f0f7ff;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 8px;
-            font-size: 48px;
+            font-size: 40px;
             color: #b8cfe0;
         }
 
         .product-card h4 {
-            margin: 10px 0 5px;
+            margin: 8px 0 4px;
             color: #1a2a4a;
-            font-size: 16px;
+            font-size: clamp(14px, 1.6vw, 16px);
             font-weight: 700;
+            word-wrap: break-word;
         }
 
         .product-card .sku {
-            font-size: 12px;
+            font-size: clamp(10px, 1.2vw, 12px);
             color: #7f8c8d;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
 
         .product-card .category {
-            font-size: 12px;
+            font-size: clamp(10px, 1.2vw, 12px);
             color: #0052d4;
             background: #e8f0fe;
             display: inline-block;
-            padding: 2px 12px;
+            padding: 2px 10px;
             border-radius: 12px;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             font-weight: 500;
         }
 
         .product-card .price {
             color: #00a86b;
             font-weight: 700;
-            font-size: 20px;
+            font-size: clamp(18px, 2.5vw, 20px);
         }
 
         .product-card .cost-price {
-            font-size: 12px;
+            font-size: 11px;
             color: #7f8c8d;
             text-decoration: line-through;
         }
 
         .product-card .stock {
-            font-size: 14px;
-            margin: 5px 0;
+            font-size: clamp(12px, 1.4vw, 14px);
+            margin: 4px 0;
             font-weight: 600;
         }
 
@@ -607,10 +656,10 @@
             display: inline-block;
             background: #0052d4;
             color: white;
-            font-size: 10px;
-            padding: 2px 10px;
+            font-size: 9px;
+            padding: 2px 8px;
             border-radius: 12px;
-            margin-top: 5px;
+            margin-top: 4px;
             font-weight: 600;
         }
 
@@ -624,35 +673,45 @@
             display: none !important;
         }
 
+        .product-card button {
+            font-size: clamp(11px, 1.3vw, 12px);
+            padding: 4px 12px;
+            min-height: 30px;
+        }
+
         /* ===== FORM STYLES ===== */
         .form-section {
             background: #f0f7ff;
-            padding: 20px;
+            padding: 15px;
             border-radius: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border: 1px solid #d6e4f5;
         }
 
         .form-section h2 {
             color: #0052d4;
-            margin-bottom: 15px;
-            font-size: 20px;
+            margin-bottom: 12px;
+            font-size: clamp(16px, 2.5vw, 20px);
         }
 
         .form-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
             gap: 10px;
             margin-bottom: 10px;
         }
 
         input, select {
-            padding: 10px 14px;
+            padding: 10px 12px;
             border: 1px solid #d6e4f5;
             border-radius: 8px;
-            font-size: 14px;
+            font-size: clamp(13px, 1.5vw, 14px);
             background: white;
             transition: border-color 0.3s ease;
+            min-height: 44px;
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         input:focus, select:focus {
@@ -664,18 +723,20 @@
         input[type="file"] {
             padding: 8px;
             cursor: pointer;
+            min-height: 44px;
         }
 
         .image-preview-container {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             margin-top: 5px;
+            flex-wrap: wrap;
         }
 
         .image-preview {
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
             border-radius: 8px;
             object-fit: cover;
             border: 2px solid #d6e4f5;
@@ -689,7 +750,7 @@
         /* ===== SALES AUTO-CALCULATION STYLES ===== */
         .sale-summary {
             background: #e8f0fe;
-            padding: 15px 20px;
+            padding: 12px 15px;
             border-radius: 8px;
             margin: 10px 0;
             display: none;
@@ -703,8 +764,9 @@
         .sale-summary .sale-detail {
             display: flex;
             justify-content: space-between;
-            padding: 5px 0;
-            font-size: 15px;
+            padding: 4px 0;
+            font-size: clamp(13px, 1.5vw, 15px);
+            flex-wrap: wrap;
         }
 
         .sale-summary .sale-detail .label {
@@ -719,7 +781,7 @@
 
         .sale-summary .sale-detail .value.total {
             color: #00a86b;
-            font-size: 18px;
+            font-size: clamp(16px, 2vw, 18px);
         }
 
         .sale-summary .sale-detail .value.unit-price {
@@ -728,25 +790,27 @@
 
         .sale-summary .divider {
             border-top: 1px solid #d6e4f5;
-            margin: 8px 0;
+            margin: 6px 0;
         }
 
         /* ===== TABLE STYLES ===== */
         .table-wrapper {
             overflow-x: auto;
-            margin-top: 20px;
+            margin-top: 15px;
             border-radius: 12px;
             border: 1px solid #e8edf5;
+            -webkit-overflow-scrolling: touch;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 14px;
+            font-size: clamp(12px, 1.3vw, 14px);
+            min-width: 600px;
         }
 
         th, td {
-            padding: 12px 16px;
+            padding: 10px 12px;
             text-align: left;
             border-bottom: 1px solid #e8edf5;
         }
@@ -757,6 +821,7 @@
             color: #0052d4;
             position: sticky;
             top: 0;
+            z-index: 10;
         }
 
         tr:hover {
@@ -764,8 +829,8 @@
         }
 
         td .table-image {
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             object-fit: cover;
             border-radius: 8px;
             border: 1px solid #e8edf5;
@@ -774,15 +839,19 @@
         /* ===== REPORTS ===== */
         .report-filters {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 8px;
+            margin-bottom: 15px;
             flex-wrap: wrap;
         }
 
         .report-filters .report-btn {
-            padding: 10px 24px;
-            font-size: 14px;
+            padding: 8px 16px;
+            font-size: clamp(12px, 1.4vw, 14px);
             cursor: pointer;
+            min-height: 36px;
+            flex: 1;
+            min-width: 80px;
+            text-align: center;
         }
 
         .report-filters .report-btn.active {
@@ -805,26 +874,28 @@
 
         #reportOutput {
             background: #f0f7ff;
-            padding: 20px;
+            padding: 15px;
             border-radius: 12px;
             border: 1px solid #d6e4f5;
+            overflow-x: auto;
         }
 
         #reportOutput h3 {
             color: #0052d4;
+            font-size: clamp(16px, 2vw, 20px);
         }
 
         .report-summary {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+            margin: 15px 0;
         }
 
         .report-summary .stat-card {
             background: linear-gradient(135deg, #0052d4, #0066ff);
             color: white;
-            padding: 20px 25px;
+            padding: 15px 18px;
             border-radius: 12px;
         }
 
@@ -841,30 +912,31 @@
         }
 
         .report-summary .stat-card h3 {
-            font-size: 14px;
+            font-size: clamp(11px, 1.3vw, 14px);
             opacity: 0.9;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             font-weight: 500;
         }
 
         .report-summary .stat-card p {
-            font-size: 28px;
+            font-size: clamp(18px, 3vw, 28px);
             font-weight: 700;
         }
 
         /* ===== YEARLY REPORT MONTHLY BREAKDOWN ===== */
         .monthly-breakdown {
-            margin-top: 20px;
+            margin-top: 15px;
         }
 
         .monthly-breakdown h4 {
             color: #0052d4;
             margin-bottom: 10px;
+            font-size: clamp(14px, 1.8vw, 18px);
         }
 
         .month-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 10px;
             margin-top: 10px;
         }
@@ -873,7 +945,7 @@
             background: white;
             border: 1px solid #d6e4f5;
             border-radius: 8px;
-            padding: 12px 15px;
+            padding: 10px 12px;
             text-align: center;
             transition: all 0.3s ease;
         }
@@ -887,23 +959,23 @@
         .month-card .month-name {
             font-weight: 700;
             color: #0052d4;
-            font-size: 14px;
+            font-size: clamp(12px, 1.4vw, 14px);
         }
 
         .month-card .month-revenue {
-            font-size: 18px;
+            font-size: clamp(14px, 1.8vw, 18px);
             font-weight: 700;
             color: #00a86b;
-            margin-top: 5px;
+            margin-top: 4px;
         }
 
         .month-card .month-items {
-            font-size: 12px;
+            font-size: clamp(10px, 1.2vw, 12px);
             color: #7f8c8d;
         }
 
         .month-card .month-transactions {
-            font-size: 12px;
+            font-size: clamp(10px, 1.2vw, 12px);
             color: #7f8c8d;
         }
 
@@ -922,7 +994,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(255,255,255,0.8);
+            background: rgba(255,255,255,0.85);
             display: none;
             align-items: center;
             justify-content: center;
@@ -936,8 +1008,8 @@
         }
 
         .loading-spinner {
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             border: 4px solid #f0f7ff;
             border-top: 4px solid #0052d4;
             border-radius: 50%;
@@ -952,120 +1024,269 @@
         .loading-text {
             color: #0052d4;
             font-weight: 600;
+            font-size: clamp(14px, 1.6vw, 16px);
         }
 
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 768px) {
+        /* ============================================ */
+        /* ===== RESPONSIVE BREAKPOINTS ===== */
+        /* ============================================ */
+
+        /* Small phones */
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+
             .container {
                 padding: 10px;
+                border-radius: 12px;
             }
-            
+
             header {
                 flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
+                align-items: stretch;
+                padding: 10px;
             }
 
             .header-left {
-                width: 100%;
-            }
-
-            .logo-text .company-name {
-                font-size: 18px;
-            }
-
-            .logo-icon {
-                width: 50px;
-                height: 50px;
+                min-width: auto;
             }
 
             .header-right {
-                width: 100%;
                 justify-content: flex-start;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .header-right button {
+                font-size: 11px;
+                padding: 6px 10px;
+                min-height: 32px;
+            }
+
+            .logo-icon {
+                width: 38px;
+                height: 38px;
+            }
+
+            .logo-icon::after {
+                font-size: 12px;
             }
 
             .stats-grid {
                 grid-template-columns: 1fr 1fr;
+                gap: 8px;
             }
-            
+
+            .stat-card {
+                padding: 12px 14px;
+            }
+
+            .stat-card p {
+                font-size: 20px;
+            }
+
             .product-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 10px;
             }
-            
+
+            .product-card .product-image-container {
+                height: 110px;
+            }
+
+            .product-card .no-image {
+                height: 110px;
+                font-size: 32px;
+            }
+
+            .search-container {
+                flex-direction: column;
+            }
+
+            .search-btn, .clear-all-btn {
+                width: 100%;
+            }
+
             .search-filters {
                 flex-direction: column;
                 align-items: stretch;
             }
-            
+
             .filter-group {
-                flex-wrap: wrap;
+                justify-content: space-between;
             }
-            
+
+            .price-filter {
+                width: 60px;
+            }
+
             .search-stats {
                 margin-left: 0;
                 justify-content: space-between;
                 width: 100%;
             }
-            
-            .price-filter {
-                width: 80px;
+
+            .form-row {
+                grid-template-columns: 1fr;
             }
 
             .tabs {
-                gap: 5px;
+                gap: 4px;
+                padding: 4px;
             }
 
             .tab-btn {
-                padding: 8px 14px;
-                font-size: 12px;
-            }
-
-            .product-card .product-image-container {
-                height: 140px;
-            }
-
-            .month-grid {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            }
-        }
-
-        @media (max-width: 600px) {
-            .table-wrapper {
-                overflow-x: scroll;
-            }
-            table {
-                font-size: 12px;
-            }
-            th, td {
-                padding: 8px;
-            }
-            
-            .search-container {
-                flex-direction: column;
-            }
-            
-            .search-btn, .clear-all-btn {
-                width: 100%;
-            }
-
-            .logo-text .company-name {
-                font-size: 15px;
-            }
-
-            .logo-text .company-tagline {
+                padding: 6px 10px;
                 font-size: 10px;
-            }
-
-            .product-card .product-image-container {
-                height: 120px;
+                min-height: 30px;
+                min-width: 50px;
             }
 
             .month-grid {
                 grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
             }
 
-            .month-card .month-revenue {
-                font-size: 15px;
+            .report-filters .report-btn {
+                font-size: 11px;
+                padding: 6px 10px;
+                min-height: 30px;
+                min-width: 60px;
+            }
+
+            .table-wrapper {
+                font-size: 11px;
+            }
+
+            th, td {
+                padding: 6px 8px;
+            }
+
+            td .table-image {
+                width: 30px;
+                height: 30px;
+            }
+
+            .filter-chips {
+                gap: 4px;
+            }
+
+            .chip {
+                font-size: 10px;
+                padding: 3px 10px;
+                min-height: 26px;
+            }
+        }
+
+        /* Tablets and small laptops */
+        @media (min-width: 481px) and (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            header {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .header-left {
+                min-width: 180px;
+            }
+
+            .header-right {
+                justify-content: flex-start;
+                flex: 1;
+                min-width: 200px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+
+            .search-container {
+                flex-wrap: wrap;
+            }
+
+            .search-btn, .clear-all-btn {
+                flex: 1;
+                min-width: 80px;
+            }
+
+            .month-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
+
+            .form-row {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            }
+        }
+
+        /* Large screens */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .month-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+        }
+
+        /* Touch-friendly adjustments */
+        @media (hover: none) {
+            button:hover {
+                transform: none;
+                box-shadow: 0 2px 8px rgba(0, 82, 212, 0.2);
+            }
+
+            .product-card:hover {
+                transform: none;
+                box-shadow: none;
+            }
+
+            .tab-btn:hover {
+                transform: none;
+                box-shadow: none;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                border: none;
+            }
+
+            .header-right button,
+            .search-btn,
+            .clear-all-btn,
+            .sync-btn {
+                display: none !important;
+            }
+
+            .tab-btn {
+                display: none !important;
+            }
+
+            .tab-content {
+                display: block !important;
+            }
+
+            .loading-overlay {
+                display: none !important;
             }
         }
     </style>
@@ -1085,23 +1306,23 @@
                     <div class="logo-icon"></div>
                     <div class="logo-text">
                         <div class="company-name">
-                            SMART TECHNOLOGY <span>DIGITAL INFORMATION HUB</span>
+                            SMART TECH <span>HUB</span>
                         </div>
-                        <div class="company-tagline">⚡ Inventory Management System</div>
+                        <div class="company-tagline">⚡ Inventory System</div>
                     </div>
                 </div>
             </div>
             <div class="header-right">
                 <div class="supabase-status" id="supabaseStatus">
                     <span class="dot"></span>
-                    <span>Cloud Sync</span>
+                    <span>Sync</span>
                 </div>
                 <div class="user-badge">
                     <span id="userRole">Employee</span>
-                    <button onclick="toggleRole()" style="background:#0052d4;">Switch to Admin</button>
+                    <button onclick="toggleRole()" style="background:#0052d4;font-size:11px;padding:4px 10px;min-height:30px;">Admin</button>
                 </div>
-                <button onclick="syncToCloud()" class="btn-success">☁️ Sync Now</button>
-                <button onclick="testSupabaseConnection()" style="background:#8e44ad;">🔌 Test Connection</button>
+                <button onclick="syncToCloud()" class="btn-success" style="font-size:11px;padding:4px 10px;min-height:30px;">☁️ Sync</button>
+                <button onclick="testSupabaseConnection()" style="background:#8e44ad;font-size:11px;padding:4px 10px;min-height:30px;">🔌 Test</button>
             </div>
         </header>
 
@@ -1121,7 +1342,7 @@
                     <p id="totalProducts">0</p>
                 </div>
                 <div class="stat-card">
-                    <h3>Total Stock Value</h3>
+                    <h3>Stock Value</h3>
                     <p id="totalValue">₦0</p>
                 </div>
                 <div class="stat-card">
@@ -1129,7 +1350,7 @@
                     <p id="todaySales">₦0</p>
                 </div>
                 <div class="stat-card">
-                    <h3>Low Stock Items</h3>
+                    <h3>Low Stock</h3>
                     <p id="lowStock">0</p>
                 </div>
             </div>
@@ -1142,60 +1363,61 @@
                         <input 
                             type="text" 
                             id="quickSearch" 
-                            placeholder="Search products by name, SKU, price, or category..." 
+                            placeholder="Search products..." 
                             onkeyup="quickSearch()" 
                             autofocus
+                            inputmode="search"
                         >
                         <button onclick="clearSearch()" class="clear-btn" id="clearSearchBtn">✕</button>
                     </div>
                     <button onclick="quickSearch()" class="search-btn">Search</button>
-                    <button onclick="clearSearch()" class="clear-all-btn">Clear All</button>
+                    <button onclick="clearSearch()" class="clear-all-btn">Clear</button>
                 </div>
 
                 <div class="search-filters">
                     <div class="filter-group">
-                        <label>Search in:</label>
+                        <label>Search:</label>
                         <select id="searchFilter" onchange="quickSearch()">
-                            <option value="all">📋 All Fields</option>
-                            <option value="name">📝 Product Name</option>
-                            <option value="sku">🏷️ SKU</option>
-                            <option value="category">📂 Category</option>
-                            <option value="price">💰 Price</option>
-                            <option value="stock">📊 Stock Level</option>
+                            <option value="all">All</option>
+                            <option value="name">Name</option>
+                            <option value="sku">SKU</option>
+                            <option value="category">Category</option>
+                            <option value="price">Price</option>
+                            <option value="stock">Stock</option>
                         </select>
                     </div>
 
                     <div class="filter-group">
-                        <label>Price (₦):</label>
-                        <input type="number" id="minPrice" placeholder="Min" oninput="quickSearch()" class="price-filter">
-                        <span class="price-separator">to</span>
-                        <input type="number" id="maxPrice" placeholder="Max" oninput="quickSearch()" class="price-filter">
+                        <label>Price:</label>
+                        <input type="number" id="minPrice" placeholder="Min" oninput="quickSearch()" class="price-filter" inputmode="numeric">
+                        <span class="price-separator">-</span>
+                        <input type="number" id="maxPrice" placeholder="Max" oninput="quickSearch()" class="price-filter" inputmode="numeric">
                     </div>
 
                     <div class="filter-group">
                         <label>Stock:</label>
                         <select id="stockFilter" onchange="quickSearch()">
-                            <option value="all">All Stock</option>
+                            <option value="all">All</option>
                             <option value="in">In Stock</option>
-                            <option value="low">Low Stock (&lt;5)</option>
-                            <option value="out">Out of Stock</option>
+                            <option value="low">Low (&lt;5)</option>
+                            <option value="out">Out</option>
                         </select>
                     </div>
 
                     <div class="search-stats">
-                        <span id="searchResultsCount" class="search-count">0 products found</span>
+                        <span id="searchResultsCount" class="search-count">0 found</span>
                         <span id="searchTime" class="search-time"></span>
                     </div>
                 </div>
 
                 <!-- ===== QUICK FILTER CHIPS ===== -->
                 <div class="filter-chips">
-                    <span class="chip-label">Quick filters:</span>
-                    <button class="chip" onclick="applyChipFilter('low')">🔴 Low Stock</button>
-                    <button class="chip" onclick="applyChipFilter('out')">⛔ Out of Stock</button>
-                    <button class="chip" onclick="applyChipFilter('under20000')">💰 Under ₦20,000</button>
-                    <button class="chip" onclick="applyChipFilter('over100000')">💰 Over ₦100,000</button>
-                    <button class="chip" onclick="applyChipFilter('all')">📋 Show All</button>
+                    <span class="chip-label">Quick:</span>
+                    <button class="chip" onclick="applyChipFilter('low')">🔴 Low</button>
+                    <button class="chip" onclick="applyChipFilter('out')">⛔ Out</button>
+                    <button class="chip" onclick="applyChipFilter('under20000')">💰 Under ₦20k</button>
+                    <button class="chip" onclick="applyChipFilter('over100000')">💰 Over ₦100k</button>
+                    <button class="chip" onclick="applyChipFilter('all')">📋 All</button>
                 </div>
             </div>
 
@@ -1211,25 +1433,27 @@
                     <div class="form-row">
                         <input type="text" id="productName" placeholder="Product Name" required>
                         <input type="text" id="productSKU" placeholder="SKU (optional)">
-                        <input type="text" id="productCategory" placeholder="Category (e.g., Electronics)">
+                        <input type="text" id="productCategory" placeholder="Category">
                     </div>
                     <div class="form-row">
-                        <input type="number" id="costPrice" placeholder="Cost Price (₦)" step="0.01" required>
-                        <input type="number" id="sellingPrice" placeholder="Selling Price (₦)" step="0.01" required>
-                        <input type="number" id="lastPrice" placeholder="Last Price (₦)" step="0.01">
+                        <input type="number" id="costPrice" placeholder="Cost Price (₦)" step="0.01" required inputmode="decimal">
+                        <input type="number" id="sellingPrice" placeholder="Selling Price (₦)" step="0.01" required inputmode="decimal">
+                        <input type="number" id="lastPrice" placeholder="Last Price (₦)" step="0.01" inputmode="decimal">
                     </div>
                     <div class="form-row">
-                        <input type="number" id="quantity" placeholder="Quantity" required>
+                        <input type="number" id="quantity" placeholder="Quantity" required inputmode="numeric">
                         <div style="display:flex;flex-direction:column;gap:5px;">
                             <input type="file" id="productImage" accept="image/*" onchange="previewImage(event)">
                             <div class="image-preview-container">
                                 <img id="imagePreview" class="image-preview" alt="Product Image Preview">
-                                <span style="font-size:12px;color:#7f8c8d;">Upload product image</span>
+                                <span style="font-size:11px;color:#7f8c8d;">Upload image</span>
                             </div>
                         </div>
                     </div>
-                    <button type="submit" style="background:#0052d4;">💾 Save Product</button>
-                    <button type="button" onclick="clearForm()" style="background:#e74c3c;">🗑️ Clear</button>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                        <button type="submit" style="background:#0052d4;flex:1;min-width:100px;">💾 Save</button>
+                        <button type="button" onclick="clearForm()" style="background:#e74c3c;flex:1;min-width:100px;">🗑️ Clear</button>
+                    </div>
                 </form>
             </div>
 
@@ -1241,9 +1465,9 @@
                             <th>Name</th>
                             <th>SKU</th>
                             <th>Category</th>
-                            <th>Cost (₦)</th>
-                            <th>Selling (₦)</th>
-                            <th>Last Price (₦)</th>
+                            <th>Cost</th>
+                            <th>Selling</th>
+                            <th>Last</th>
                             <th>Stock</th>
                             <th>Actions</th>
                         </tr>
@@ -1262,10 +1486,10 @@
                         <select id="saleProduct" required onchange="calculateSale()">
                             <option value="">Select Product</option>
                         </select>
-                        <input type="number" id="saleQuantity" placeholder="Quantity" min="1" required oninput="calculateSale()">
+                        <input type="number" id="saleQuantity" placeholder="Quantity" min="1" required oninput="calculateSale()" inputmode="numeric">
                     </div>
                     <div class="form-row">
-                        <input type="number" id="salePrice" placeholder="Selling Price (₦) - override" step="0.01" oninput="calculateSale()">
+                        <input type="number" id="salePrice" placeholder="Price override" step="0.01" oninput="calculateSale()" inputmode="decimal">
                         <button type="submit" style="background:#00a86b;">💰 Record Sale</button>
                     </div>
 
@@ -1285,11 +1509,11 @@
                         </div>
                         <div class="divider"></div>
                         <div class="sale-detail">
-                            <span class="label" style="font-weight:700;">Total Amount:</span>
+                            <span class="label" style="font-weight:700;">Total:</span>
                             <span class="value total" id="saleTotalAmount">₦0.00</span>
                         </div>
-                        <div class="sale-detail" style="font-size:13px;color:#7f8c8d;">
-                            <span class="label">Available Stock:</span>
+                        <div class="sale-detail" style="font-size:12px;color:#7f8c8d;">
+                            <span class="label">Stock:</span>
                             <span class="value" id="saleAvailableStock" style="color:#7f8c8d;">0</span>
                         </div>
                     </div>
@@ -1303,8 +1527,8 @@
                             <th>Date</th>
                             <th>Product</th>
                             <th>Qty</th>
-                            <th>Price (₦)</th>
-                            <th>Total (₦)</th>
+                            <th>Price</th>
+                            <th>Total</th>
                         </tr>
                     </thead>
                     <tbody id="salesTableBody"></tbody>
@@ -1316,12 +1540,12 @@
         <div id="reports" class="tab-content">
             <div class="report-filters">
                 <button class="report-btn" onclick="generateReport('daily', this)">📅 Today</button>
-                <button class="report-btn" onclick="generateReport('weekly', this)">📆 This Week</button>
-                <button class="report-btn" onclick="generateReport('monthly', this)">📊 This Month</button>
-                <button class="report-btn yearly" onclick="generateReport('yearly', this)">📈 Yearly (All Months)</button>
+                <button class="report-btn" onclick="generateReport('weekly', this)">📆 Week</button>
+                <button class="report-btn" onclick="generateReport('monthly', this)">📊 Month</button>
+                <button class="report-btn yearly" onclick="generateReport('yearly', this)">📈 Year</button>
             </div>
             <div id="reportOutput">
-                <p style="color:#7f8c8d;text-align:center;padding:40px 0;">Select a report type above to view</p>
+                <p style="color:#7f8c8d;text-align:center;padding:30px 10px;">Select a report type above</p>
             </div>
         </div>
     </div>
@@ -1334,9 +1558,8 @@
         // ===== 🗄️ SUPABASE CONFIGURATION =====
         // ============================================
         // IMPORTANT: Replace these with YOUR actual Supabase credentials
-        // You can find these in your Supabase project settings under API
+        // Get from: https://supabase.com/dashboard/project/YOUR_PROJECT_ID/settings/api
         
-        // Get these from: https://supabase.com/dashboard/project/YOUR_PROJECT_ID/settings/api
         const supabaseUrl = "https://wwzqkprdukzfhgwfhyoy.supabase.co";
         const supabaseKey = "sb_publishable_iiiAVZquuU4UvqMGY0Rygg_3JaKnalZ";
         
@@ -1371,10 +1594,10 @@
             const status = document.getElementById('supabaseStatus');
             if (online) {
                 status.className = 'supabase-status';
-                status.innerHTML = '<span class="dot"></span><span>Cloud Sync</span>';
+                status.innerHTML = '<span class="dot"></span><span>Sync</span>';
             } else {
                 status.className = 'supabase-status offline';
-                status.innerHTML = '<span class="dot"></span><span>Offline Mode</span>';
+                status.innerHTML = '<span class="dot"></span><span>Offline</span>';
             }
         }
 
@@ -1384,7 +1607,6 @@
         async function testSupabaseConnection() {
             showLoading(true);
             try {
-                // Try to get the list of tables
                 const { data, error } = await supabaseClient
                     .from('products')
                     .select('*')
@@ -1433,7 +1655,6 @@
                 }
                 
                 if (data && data.length > 0) {
-                    // Convert snake_case to camelCase for the app
                     products = data.map(p => ({
                         id: p.id,
                         name: p.name,
@@ -1471,7 +1692,6 @@
                 }
                 
                 if (data && data.length > 0) {
-                    // Convert snake_case to camelCase for the app
                     sales = data.map(s => ({
                         id: s.id,
                         productId: s.productid,
@@ -1498,7 +1718,6 @@
                 const productsLoaded = await loadProductsFromSupabase();
                 const salesLoaded = await loadSalesFromSupabase();
                 
-                // If no data in Supabase or error, load from local storage
                 if (!productsLoaded || !salesLoaded) {
                     loadFromLocalStorage();
                 }
@@ -1518,7 +1737,6 @@
         // Save Products to Supabase
         async function saveProductsToSupabase() {
             try {
-                // First, delete all existing products
                 const { error: deleteError } = await supabaseClient
                     .from('products')
                     .delete()
@@ -1529,7 +1747,6 @@
                     throw deleteError;
                 }
                 
-                // Then insert all products
                 if (products.length > 0) {
                     const productsToInsert = products.map(p => ({
                         id: p.id,
@@ -1565,7 +1782,6 @@
         // Save Sales to Supabase
         async function saveSalesToSupabase() {
             try {
-                // First, delete all existing sales
                 const { error: deleteError } = await supabaseClient
                     .from('sales')
                     .delete()
@@ -1576,7 +1792,6 @@
                     throw deleteError;
                 }
                 
-                // Then insert all sales
                 if (sales.length > 0) {
                     const salesToInsert = sales.map(s => ({
                         id: s.id,
@@ -1651,7 +1866,6 @@
             products = storedProducts ? JSON.parse(storedProducts) : [];
             sales = storedSales ? JSON.parse(storedSales) : [];
             
-            // If no data, add sample products
             if (products.length === 0) {
                 products = [
                     { id: '1', name: 'Smartphone X Pro', sku: 'SPX-001', category: 'Electronics', costPrice: 450000, sellingPrice: 550000, lastPrice: 550000, quantity: 15, image: '', created_at: new Date().toISOString() },
@@ -2078,9 +2292,9 @@
             
             if (products.length === 0) {
                 grid.innerHTML = `
-                    <div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:#4a6fa5;">
-                        <h3 style="font-size:24px;">📦 No products yet</h3>
-                        <p style="margin-top:10px;">Add your first product using the "Products" tab</p>
+                    <div style="grid-column:1/-1;text-align:center;padding:40px 20px;color:#4a6fa5;">
+                        <h3 style="font-size:20px;">📦 No products yet</h3>
+                        <p style="margin-top:8px;">Add your first product using the "Products" tab</p>
                     </div>
                 `;
                 return;
@@ -2099,7 +2313,7 @@
                     <div class="product-card" data-product-id="${p.id}">
                         <div class="product-image-container">
                             ${p.image ? 
-                                `<img src="${p.image}" alt="${p.name}">` : 
+                                `<img src="${p.image}" alt="${p.name}" loading="lazy">` : 
                                 `<div class="no-image">📦</div>`
                             }
                         </div>
@@ -2109,8 +2323,8 @@
                         <div class="price">${CURRENCY}${p.sellingPrice.toFixed(2)}</div>
                         ${isAdmin ? `<div class="cost-price">Cost: ${CURRENCY}${p.costPrice.toFixed(2)}</div>` : ''}
                         <div class="stock ${stockClass}">📊 ${stockLabel}</div>
-                        ${isAdmin ? `<div style="font-size:11px;color:#7f8c8d;">Last: ${CURRENCY}${p.lastPrice.toFixed(2)}</div>` : ''}
-                        <button onclick="editProduct('${p.id}')" style="background:#00a86b;margin-top:10px;padding:5px 15px;font-size:12px;cursor:pointer;">✏️ Edit</button>
+                        ${isAdmin ? `<div style="font-size:10px;color:#7f8c8d;">Last: ${CURRENCY}${p.lastPrice.toFixed(2)}</div>` : ''}
+                        <button onclick="editProduct('${p.id}')" style="background:#00a86b;margin-top:8px;padding:4px 12px;font-size:11px;cursor:pointer;">✏️ Edit</button>
                     </div>
                 `;
             }).join('');
@@ -2124,7 +2338,7 @@
             
             tbody.innerHTML = products.map(p => `
                 <tr>
-                    <td>${p.image ? `<img src="${p.image}" alt="${p.name}" class="table-image">` : '📦'}</td>
+                    <td>${p.image ? `<img src="${p.image}" alt="${p.name}" class="table-image" loading="lazy">` : '📦'}</td>
                     <td><strong>${p.name}</strong></td>
                     <td>${p.sku || '-'}</td>
                     <td>${p.category || '-'}</td>
@@ -2133,8 +2347,8 @@
                     <td>${CURRENCY}${p.lastPrice.toFixed(2)}</td>
                     <td style="color: ${p.quantity < 5 ? '#e74c3c' : '#00a86b'}; font-weight:600;">${p.quantity}</td>
                     <td>
-                        <button onclick="editProduct('${p.id}')" style="background:#00a86b;padding:5px 10px;font-size:12px;cursor:pointer;">✏️</button>
-                        <button onclick="deleteProduct('${p.id}')" style="background:#e74c3c;padding:5px 10px;font-size:12px;cursor:pointer;">🗑️</button>
+                        <button onclick="editProduct('${p.id}')" style="background:#00a86b;padding:4px 8px;font-size:11px;cursor:pointer;">✏️</button>
+                        <button onclick="deleteProduct('${p.id}')" style="background:#e74c3c;padding:4px 8px;font-size:11px;cursor:pointer;">🗑️</button>
                     </td>
                 </tr>
             `).join('');
@@ -2277,7 +2491,7 @@
             
             let reportHTML = `
                 <h3>📊 ${periodName} Report</h3>
-                <p style="color:#4a6fa5;margin-bottom:10px;">
+                <p style="color:#4a6fa5;margin-bottom:10px;font-size:clamp(12px,1.4vw,14px);">
                     ${new Date(startDate).toLocaleDateString()} - ${new Date().toLocaleDateString()}
                 </p>
                 <div class="report-summary">
@@ -2294,8 +2508,9 @@
                         <p>${filteredSales.length}</p>
                     </div>
                 </div>
-                <h4 style="color:#0052d4;">📈 Sales by Product</h4>
+                <h4 style="color:#0052d4;font-size:clamp(14px,1.6vw,16px);">📈 Sales by Product</h4>
                 ${filteredSales.length > 0 ? `
+                <div class="table-wrapper">
                 <table>
                     <thead>
                         <tr>
@@ -2320,6 +2535,7 @@
                         }).join('')}
                     </tbody>
                 </table>
+                </div>
                 ` : `<p style="color:#7f8c8d;padding:20px;text-align:center;">No sales recorded for this period</p>`}
             `;
             
@@ -2369,7 +2585,7 @@
             
             let reportHTML = `
                 <h3>📈 Yearly Report - ${year}</h3>
-                <p style="color:#4a6fa5;margin-bottom:10px;">
+                <p style="color:#4a6fa5;margin-bottom:10px;font-size:clamp(12px,1.4vw,14px);">
                     January 1, ${year} - December 31, ${year}
                 </p>
                 <div class="report-summary">
@@ -2386,7 +2602,7 @@
                         <p>${totalTransactions}</p>
                     </div>
                     <div class="stat-card">
-                        <h3>Average Monthly Revenue</h3>
+                        <h3>Avg Monthly</h3>
                         <p>${CURRENCY}${(totalRevenue / 12).toFixed(2)}</p>
                     </div>
                 </div>
@@ -2401,15 +2617,16 @@
                                     <div class="month-name">${month.name}</div>
                                     <div class="month-revenue">${hasSales ? CURRENCY + month.revenue.toFixed(2) : 'No sales'}</div>
                                     <div class="month-items">📦 ${month.items} items</div>
-                                    <div class="month-transactions">🔄 ${month.transactions} transactions</div>
+                                    <div class="month-transactions">🔄 ${month.transactions} trans</div>
                                 </div>
                             `;
                         }).join('')}
                     </div>
                 </div>
                 
-                <h4 style="color:#0052d4;margin-top:20px;">📈 Top Selling Products (Yearly)</h4>
+                <h4 style="color:#0052d4;margin-top:15px;font-size:clamp(14px,1.6vw,16px);">📈 Top Selling Products</h4>
                 ${filteredSales.length > 0 ? `
+                <div class="table-wrapper">
                 <table>
                     <thead>
                         <tr>
@@ -2436,6 +2653,7 @@
                             }).join('')}
                     </tbody>
                 </table>
+                </div>
                 ` : `<p style="color:#7f8c8d;padding:20px;text-align:center;">No sales recorded for this year</p>`}
             `;
             
