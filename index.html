@@ -230,7 +230,6 @@
             background: #c0392b;
         }
 
-        /* Role toggle button styles */
         .btn-role {
             background: #0052d4;
             min-width: 100px;
@@ -451,7 +450,7 @@
 
         .search-filters {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             align-items: center;
             flex-wrap: wrap;
             padding-top: 12px;
@@ -462,13 +461,14 @@
             display: flex;
             align-items: center;
             gap: 5px;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
         }
 
         .filter-group label {
             font-size: clamp(11px, 1.3vw, 13px);
             color: #4a6fa5;
             font-weight: 600;
+            white-space: nowrap;
         }
 
         .filter-group select,
@@ -490,14 +490,20 @@
             border-color: #0052d4;
         }
 
+        .filter-group select {
+            min-width: 80px;
+        }
+
         .price-filter {
-            width: 80px;
+            width: 70px;
+            min-width: 50px;
         }
 
         .price-separator {
             color: #4a6fa5;
             font-size: 13px;
             font-weight: 600;
+            padding: 0 2px;
         }
 
         .search-stats {
@@ -505,18 +511,20 @@
             align-items: center;
             gap: 10px;
             margin-left: auto;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
         }
 
         .search-count {
             font-size: clamp(12px, 1.4vw, 14px);
             color: #0052d4;
             font-weight: 600;
+            white-space: nowrap;
         }
 
         .search-time {
             font-size: clamp(10px, 1.2vw, 12px);
             color: #7f8c8d;
+            white-space: nowrap;
         }
 
         /* ===== FILTER CHIPS ===== */
@@ -699,6 +707,28 @@
             font-size: clamp(11px, 1.3vw, 12px);
             padding: 4px 12px;
             min-height: 30px;
+        }
+
+        /* Admin-only elements - hidden by default */
+        .admin-only {
+            display: none !important;
+        }
+
+        .admin-visible {
+            display: block;
+        }
+
+        /* Show admin elements when admin class is on body */
+        body.admin-mode .admin-only {
+            display: block !important;
+        }
+
+        body.admin-mode .admin-visible {
+            display: block;
+        }
+
+        body.admin-mode .employee-hidden {
+            display: none !important;
         }
 
         /* ===== FORM STYLES ===== */
@@ -1133,20 +1163,29 @@
             .search-filters {
                 flex-direction: column;
                 align-items: stretch;
+                gap: 8px;
             }
 
             .filter-group {
                 justify-content: space-between;
+                flex-wrap: wrap;
+            }
+
+            .filter-group select {
+                flex: 1;
+                min-width: 60px;
             }
 
             .price-filter {
                 width: 60px;
+                flex: 1;
             }
 
             .search-stats {
                 margin-left: 0;
                 justify-content: space-between;
                 width: 100%;
+                flex-wrap: wrap;
             }
 
             .form-row {
@@ -1242,6 +1281,18 @@
             .search-btn, .clear-all-btn {
                 flex: 1;
                 min-width: 80px;
+            }
+
+            .search-filters {
+                gap: 8px;
+            }
+
+            .filter-group {
+                flex-wrap: wrap;
+            }
+
+            .price-filter {
+                width: 65px;
             }
 
             .month-grid {
@@ -1464,7 +1515,10 @@
                         <input type="text" id="productCategory" placeholder="Category">
                     </div>
                     <div class="form-row">
-                        <input type="number" id="costPrice" placeholder="Cost Price (₦)" step="0.01" required inputmode="decimal">
+                        <!-- Cost Price - Admin Only -->
+                        <div class="admin-only">
+                            <input type="number" id="costPrice" placeholder="Cost Price (₦)" step="0.01" inputmode="decimal">
+                        </div>
                         <input type="number" id="sellingPrice" placeholder="Selling Price (₦)" step="0.01" required inputmode="decimal">
                         <input type="number" id="lastPrice" placeholder="Last Price (₦)" step="0.01" inputmode="decimal">
                     </div>
@@ -1493,7 +1547,8 @@
                             <th>Name</th>
                             <th>SKU</th>
                             <th>Category</th>
-                            <th>Cost</th>
+                            <!-- Cost Column - Admin Only -->
+                            <th class="admin-only">Cost</th>
                             <th>Selling</th>
                             <th>Last</th>
                             <th>Stock</th>
@@ -1959,11 +2014,15 @@
                 roleSpan.style.background = '#e74c3c';
                 toggleBtn.textContent = 'Switch to Employee';
                 toggleBtn.className = 'btn-role admin';
+                document.body.classList.add('admin-mode');
+                document.body.classList.remove('employee-mode');
             } else {
                 roleSpan.textContent = 'Employee';
                 roleSpan.style.background = '#0052d4';
                 toggleBtn.textContent = 'Switch to Admin';
                 toggleBtn.className = 'btn-role employee';
+                document.body.classList.add('employee-mode');
+                document.body.classList.remove('admin-mode');
             }
             
             renderProductGrid();
@@ -1975,9 +2034,9 @@
             updateRoleUI();
             
             if (isAdmin) {
-                alert('🔐 Admin mode activated - You can now see cost prices and edit products');
+                alert('🔐 Admin mode activated - You can now see and edit cost prices');
             } else {
-                alert('👤 Employee mode - Only showing selling prices');
+                alert('👤 Employee mode - Only showing selling and last prices');
             }
         }
 
@@ -2237,7 +2296,7 @@
             const name = document.getElementById('productName').value;
             const sku = document.getElementById('productSKU').value;
             const category = document.getElementById('productCategory').value;
-            const costPrice = parseFloat(document.getElementById('costPrice').value);
+            const costPrice = parseFloat(document.getElementById('costPrice').value) || 0;
             const sellingPrice = parseFloat(document.getElementById('sellingPrice').value);
             const lastPrice = parseFloat(document.getElementById('lastPrice').value) || sellingPrice;
             const quantity = parseInt(document.getElementById('quantity').value);
@@ -2262,7 +2321,7 @@
                 name,
                 sku: sku || '',
                 category: category || '',
-                costPrice,
+                costPrice: costPrice || 0,
                 sellingPrice,
                 lastPrice,
                 quantity,
@@ -2382,10 +2441,11 @@
                         ${p.sku ? `<div class="sku">SKU: ${p.sku}</div>` : ''}
                         ${p.category ? `<div class="category">${p.category}</div>` : ''}
                         <div class="price">${CURRENCY}${p.sellingPrice.toFixed(2)}</div>
+                        <!-- Cost Price - Admin Only -->
                         ${isAdmin ? `<div class="cost-price">Cost: ${CURRENCY}${p.costPrice.toFixed(2)}</div>` : ''}
                         <div class="stock ${stockClass}">📊 ${stockLabel}</div>
-                        ${isAdmin ? `<div style="font-size:10px;color:#7f8c8d;">Last: ${CURRENCY}${p.lastPrice.toFixed(2)}</div>` : ''}
-                        <button onclick="editProduct('${p.id}')" style="background:#00a86b;margin-top:8px;padding:4px 12px;font-size:11px;cursor:pointer;">✏️ Edit</button>
+                        <div style="font-size:10px;color:#7f8c8d;">Last: ${CURRENCY}${p.lastPrice.toFixed(2)}</div>
+                        ${isAdmin ? `<button onclick="editProduct('${p.id}')" style="background:#00a86b;margin-top:8px;padding:4px 12px;font-size:11px;cursor:pointer;">✏️ Edit</button>` : ''}
                     </div>
                 `;
             }).join('');
@@ -2397,22 +2457,39 @@
             const tbody = document.getElementById('productTableBody');
             if (!tbody) return;
             
-            tbody.innerHTML = products.map(p => `
-                <tr>
-                    <td>${p.image ? `<img src="${p.image}" alt="${p.name}" class="table-image" loading="lazy">` : '📦'}</td>
-                    <td><strong>${p.name}</strong></td>
-                    <td>${p.sku || '-'}</td>
-                    <td>${p.category || '-'}</td>
-                    <td>${CURRENCY}${p.costPrice.toFixed(2)}</td>
-                    <td>${CURRENCY}${p.sellingPrice.toFixed(2)}</td>
-                    <td>${CURRENCY}${p.lastPrice.toFixed(2)}</td>
-                    <td style="color: ${p.quantity < 5 ? '#e74c3c' : '#00a86b'}; font-weight:600;">${p.quantity}</td>
-                    <td>
+            tbody.innerHTML = products.map(p => {
+                let row = `
+                    <tr>
+                        <td>${p.image ? `<img src="${p.image}" alt="${p.name}" class="table-image" loading="lazy">` : '📦'}</td>
+                        <td><strong>${p.name}</strong></td>
+                        <td>${p.sku || '-'}</td>
+                        <td>${p.category || '-'}</td>
+                `;
+                
+                // Cost column - Admin only
+                if (isAdmin) {
+                    row += `<td>${CURRENCY}${p.costPrice.toFixed(2)}</td>`;
+                }
+                
+                row += `
+                        <td>${CURRENCY}${p.sellingPrice.toFixed(2)}</td>
+                        <td>${CURRENCY}${p.lastPrice.toFixed(2)}</td>
+                        <td style="color: ${p.quantity < 5 ? '#e74c3c' : '#00a86b'}; font-weight:600;">${p.quantity}</td>
+                        <td>
+                `;
+                
+                if (isAdmin) {
+                    row += `
                         <button onclick="editProduct('${p.id}')" style="background:#00a86b;padding:4px 8px;font-size:11px;cursor:pointer;">✏️</button>
                         <button onclick="deleteProduct('${p.id}')" style="background:#e74c3c;padding:4px 8px;font-size:11px;cursor:pointer;">🗑️</button>
-                    </td>
-                </tr>
-            `).join('');
+                    `;
+                } else {
+                    row += `<span style="color:#7f8c8d;font-size:11px;">View only</span>`;
+                }
+                
+                row += `</td></tr>`;
+                return row;
+            }).join('');
         }
 
         function populateSaleSelect() {
