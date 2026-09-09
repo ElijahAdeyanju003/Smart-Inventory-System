@@ -145,15 +145,6 @@
             font-weight: 600;
         }
 
-        .user-badge .user-name {
-            background: #2c3e50;
-            color: white;
-            padding: 4px 14px;
-            border-radius: 20px;
-            font-size: clamp(11px, 1.5vw, 14px);
-            font-weight: 600;
-        }
-
         .supabase-status {
             display: flex;
             align-items: center;
@@ -191,17 +182,6 @@
 
         .supabase-status.offline .dot {
             background: #e74c3c;
-        }
-
-        .btn-logout {
-            background: #e74c3c;
-            padding: 6px 14px;
-            font-size: 12px;
-            min-height: 34px;
-        }
-
-        .btn-logout:hover {
-            background: #c0392b;
         }
 
         /* ===== BUTTON STYLES ===== */
@@ -248,6 +228,124 @@
 
         .btn-danger:hover {
             background: #c0392b;
+        }
+
+        .btn-role {
+            background: #0052d4;
+            min-width: 100px;
+        }
+
+        .btn-role.admin {
+            background: #e74c3c;
+        }
+
+        .btn-role.admin:hover {
+            background: #c0392b;
+        }
+
+        .btn-role.employee {
+            background: #0052d4;
+        }
+
+        .btn-role.employee:hover {
+            background: #003399;
+        }
+
+        /* ===== PASSWORD MODAL ===== */
+        .password-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .password-modal.show {
+            display: flex;
+        }
+
+        .password-modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .password-modal-content h2 {
+            color: #0052d4;
+            margin-bottom: 10px;
+            font-size: clamp(18px, 2.5vw, 24px);
+        }
+
+        .password-modal-content p {
+            color: #4a6fa5;
+            margin-bottom: 20px;
+            font-size: clamp(13px, 1.5vw, 15px);
+        }
+
+        .password-modal-content .input-group {
+            margin-bottom: 15px;
+        }
+
+        .password-modal-content input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #d6e4f5;
+            border-radius: 8px;
+            font-size: 16px;
+            min-height: 48px;
+            transition: border-color 0.3s ease;
+        }
+
+        .password-modal-content input:focus {
+            outline: none;
+            border-color: #0052d4;
+            box-shadow: 0 0 0 3px rgba(0, 82, 212, 0.1);
+        }
+
+        .password-modal-content .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .password-modal-content .button-group button {
+            flex: 1;
+            min-width: 80px;
+        }
+
+        .password-modal-content .error-message {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 10px;
+            display: none;
+            padding: 8px 12px;
+            background: #fde8e8;
+            border-radius: 6px;
+        }
+
+        .password-modal-content .error-message.show {
+            display: block;
         }
 
         /* ===== TABS ===== */
@@ -713,8 +811,21 @@
             display: none !important;
         }
 
+        .admin-visible {
+            display: block;
+        }
+
+        /* Show admin elements when admin class is on body */
         body.admin-mode .admin-only {
             display: block !important;
+        }
+
+        body.admin-mode .admin-visible {
+            display: block;
+        }
+
+        body.admin-mode .employee-hidden {
+            display: none !important;
         }
 
         /* ===== FORM STYLES ===== */
@@ -1069,6 +1180,7 @@
         /* ===== RESPONSIVE BREAKPOINTS ===== */
         /* ============================================ */
 
+        /* Small phones */
         @media (max-width: 480px) {
             body {
                 padding: 5px;
@@ -1222,8 +1334,19 @@
                 padding: 3px 10px;
                 min-height: 26px;
             }
+
+            .btn-role {
+                min-width: 80px;
+                font-size: 10px;
+                padding: 6px 10px;
+            }
+
+            .password-modal-content {
+                padding: 20px;
+            }
         }
 
+        /* Tablets and small laptops */
         @media (min-width: 481px) and (max-width: 768px) {
             .container {
                 padding: 15px;
@@ -1282,6 +1405,7 @@
             }
         }
 
+        /* Large screens */
         @media (min-width: 769px) and (max-width: 1024px) {
             .product-grid {
                 grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -1296,6 +1420,7 @@
             }
         }
 
+        /* Touch-friendly adjustments */
         @media (hover: none) {
             button:hover {
                 transform: none;
@@ -1313,6 +1438,7 @@
             }
         }
 
+        /* Print styles */
         @media print {
             body {
                 background: white;
@@ -1327,7 +1453,7 @@
             .header-right button,
             .search-btn,
             .clear-all-btn,
-            .btn-logout {
+            .sync-btn {
                 display: none !important;
             }
 
@@ -1346,6 +1472,28 @@
     </style>
 </head>
 <body>
+    <!-- ===== PASSWORD MODAL ===== -->
+    <div class="password-modal" id="passwordModal">
+        <div class="password-modal-content">
+            <h2>🔐 Admin Access</h2>
+            <p>Enter the admin password to access administrative features.</p>
+            <div class="input-group">
+                <input type="password" id="adminPassword" placeholder="Enter admin password..." onkeydown="if(event.key === 'Enter') verifyPassword()">
+            </div>
+            <div class="error-message" id="passwordError">❌ Incorrect password. Please try again.</div>
+            <div class="button-group">
+                <button onclick="verifyPassword()" style="background:#0052d4;">✅ Verify</button>
+                <button onclick="closePasswordModal()" style="background:#e74c3c;">❌ Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== LOADING OVERLAY ===== -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading data from cloud...</div>
+    </div>
+
     <div class="container">
         <!-- ===== HEADER WITH LOGO ===== -->
         <header>
@@ -1366,10 +1514,9 @@
                     <span>Sync</span>
                 </div>
                 <div class="user-badge">
-                    <span class="user-name" id="userNameDisplay">User</span>
-                    <span id="userRoleDisplay">Employee</span>
+                    <span id="userRole">Employee</span>
+                    <button id="roleToggleBtn" onclick="requestAdminAccess()" class="btn-role employee">🔐 Switch to Admin</button>
                 </div>
-                <button onclick="logout()" class="btn-logout">🚪 Logout</button>
                 <button onclick="syncToCloud()" class="btn-success" style="font-size:11px;padding:4px 10px;min-height:30px;">☁️ Sync</button>
                 <button onclick="testSupabaseConnection()" style="background:#8e44ad;font-size:11px;padding:4px 10px;min-height:30px;">🔌 Test</button>
             </div>
@@ -1517,6 +1664,7 @@
                             <th>Name</th>
                             <th>SKU</th>
                             <th>Category</th>
+                            <!-- Cost Column - Admin Only -->
                             <th class="admin-only">Cost</th>
                             <th>Selling</th>
                             <th>Last</th>
@@ -1529,7 +1677,7 @@
             </div>
         </div>
 
-        <!-- ===== SALES TAB ===== -->
+        <!-- ===== SALES TAB WITH AUTO-CALCULATION ===== -->
         <div id="sales" class="tab-content">
             <div class="form-section">
                 <h2>💰 Record Sale</h2>
@@ -1545,6 +1693,7 @@
                         <button type="submit" style="background:#00a86b;">💰 Record Sale</button>
                     </div>
 
+                    <!-- ===== AUTO-CALCULATED SALE SUMMARY ===== -->
                     <div id="saleSummary" class="sale-summary">
                         <div class="sale-detail">
                             <span class="label">Product:</span>
@@ -1587,7 +1736,7 @@
             </div>
         </div>
 
-        <!-- ===== REPORTS TAB ===== -->
+        <!-- ===== REPORTS TAB WITH YEARLY OPTION ===== -->
         <div id="reports" class="tab-content">
             <div class="report-filters">
                 <button class="report-btn" onclick="generateReport('daily', this)">📅 Today</button>
@@ -1602,71 +1751,36 @@
     </div>
 
     <!-- ============================================================ -->
-    <!-- ====== JAVASCRIPT ====== -->
+    <!-- ====== JAVASCRIPT - ALL FUNCTIONALITY ====== -->
     <!-- ============================================================ -->
     <script>
         // ============================================
-        // ===== SUPABASE CONFIGURATION =====
+        // ===== 🗄️ SUPABASE CONFIGURATION =====
         // ============================================
+        // IMPORTANT: Replace these with YOUR actual Supabase credentials
+        // Get from: https://supabase.com/dashboard/project/YOUR_PROJECT_ID/settings/api
+        
         const supabaseUrl = "https://wwzqkprdukzfhgwfhyoy.supabase.co";
         const supabaseKey = "sb_publishable_iiiAVZquuU4UvqMGY0Rygg_3JaKnalZ";
         
+        // Initialize Supabase client
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
         let isOnline = false;
 
         // ============================================
-        // ===== SESSION MANAGEMENT =====
+        // ===== ADMIN PASSWORD CONFIGURATION =====
         // ============================================
-        let currentUser = null;
-        let isAdmin = false;
-
-        function checkSession() {
-            const session = localStorage.getItem('app_session');
-            if (!session) {
-                window.location.href = 'index.html';
-                return false;
-            }
-            
-            try {
-                const data = JSON.parse(session);
-                if (!data.loggedIn || !data.user) {
-                    window.location.href = 'index.html';
-                    return false;
-                }
-                
-                currentUser = data.user;
-                isAdmin = currentUser.role === 'admin';
-                
-                // Update UI with user info
-                document.getElementById('userNameDisplay').textContent = currentUser.name;
-                document.getElementById('userRoleDisplay').textContent = isAdmin ? 'Admin' : 'Employee';
-                document.getElementById('userRoleDisplay').style.background = isAdmin ? '#e74c3c' : '#0052d4';
-                
-                if (isAdmin) {
-                    document.body.classList.add('admin-mode');
-                }
-                
-                return true;
-            } catch (e) {
-                console.error('Session error:', e);
-                window.location.href = 'index.html';
-                return false;
-            }
-        }
-
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('app_session');
-                window.location.href = 'index.html';
-            }
-        }
-
+        // CHANGE THIS PASSWORD TO YOUR DESIRED ADMIN PASSWORD
+        const ADMIN_PASSWORD = "admin123";
+        
         // ============================================
         // ===== DATA STORE =====
         // ============================================
         let products = [];
         let sales = [];
+        let isAdmin = false;
         let searchTimeout = null;
+
         const CURRENCY = '₦';
         const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -1692,6 +1806,66 @@
                 status.innerHTML = '<span class="dot"></span><span>Offline</span>';
             }
         }
+
+        // ============================================
+        // ===== PASSWORD MODAL FUNCTIONS =====
+        // ============================================
+        function requestAdminAccess() {
+            // If already in admin mode, switch back to employee
+            if (isAdmin) {
+                isAdmin = false;
+                updateRoleUI();
+                alert('👤 Switched to Employee mode');
+                return;
+            }
+            
+            // Show password modal
+            document.getElementById('passwordModal').classList.add('show');
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('passwordError').classList.remove('show');
+            document.getElementById('adminPassword').focus();
+        }
+
+        function closePasswordModal() {
+            document.getElementById('passwordModal').classList.remove('show');
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('passwordError').classList.remove('show');
+        }
+
+        function verifyPassword() {
+            const password = document.getElementById('adminPassword').value;
+            const errorEl = document.getElementById('passwordError');
+            
+            if (password === ADMIN_PASSWORD) {
+                // Correct password - enable admin mode
+                isAdmin = true;
+                updateRoleUI();
+                closePasswordModal();
+                alert('🔐 Admin mode activated! You now have full access.');
+            } else {
+                // Wrong password
+                errorEl.classList.add('show');
+                document.getElementById('adminPassword').value = '';
+                document.getElementById('adminPassword').focus();
+                // Shake animation for error
+                const input = document.getElementById('adminPassword');
+                input.style.animation = 'shake 0.5s ease';
+                setTimeout(() => {
+                    input.style.animation = '';
+                }, 500);
+            }
+        }
+
+        // Add shake animation
+        const styleSheet = document.createElement("style");
+        styleSheet.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-10px); }
+                75% { transform: translateX(10px); }
+            }
+        `;
+        document.head.appendChild(styleSheet);
 
         // ============================================
         // ===== TEST SUPABASE CONNECTION =====
@@ -1734,6 +1908,7 @@
         // ===== SUPABASE DATA OPERATIONS =====
         // ============================================
         
+        // Load Products from Supabase
         async function loadProductsFromSupabase() {
             try {
                 const { data, error } = await supabaseClient
@@ -1770,6 +1945,7 @@
             }
         }
 
+        // Load Sales from Supabase
         async function loadSalesFromSupabase() {
             try {
                 const { data, error } = await supabaseClient
@@ -1801,6 +1977,7 @@
             }
         }
 
+        // Load all data from Supabase
         async function loadFromSupabase() {
             showLoading(true);
             try {
@@ -1823,6 +2000,7 @@
             }
         }
 
+        // Save Products to Supabase
         async function saveProductsToSupabase() {
             try {
                 const { error: deleteError } = await supabaseClient
@@ -1867,6 +2045,7 @@
             }
         }
 
+        // Save Sales to Supabase
         async function saveSalesToSupabase() {
             try {
                 const { error: deleteError } = await supabaseClient
@@ -1906,6 +2085,7 @@
             }
         }
 
+        // Save all data to Supabase
         async function saveToSupabase() {
             showLoading(true);
             try {
@@ -1928,6 +2108,7 @@
             }
         }
 
+        // Sync to cloud
         async function syncToCloud() {
             const result = await saveToSupabase();
             if (result) {
@@ -2000,12 +2181,39 @@
         // ===== INITIALIZATION =====
         // ============================================
         function init() {
-            if (!checkSession()) return;
             loadFromSupabase();
+            updateRoleUI();
         }
 
         // ============================================
-        // ===== SALE AUTO-CALCULATION =====
+        // ===== ROLE TOGGLE =====
+        // ============================================
+        function updateRoleUI() {
+            const roleSpan = document.getElementById('userRole');
+            const toggleBtn = document.getElementById('roleToggleBtn');
+            
+            if (isAdmin) {
+                roleSpan.textContent = 'Admin';
+                roleSpan.style.background = '#e74c3c';
+                toggleBtn.textContent = '👤 Switch to Employee';
+                toggleBtn.className = 'btn-role admin';
+                document.body.classList.add('admin-mode');
+                document.body.classList.remove('employee-mode');
+            } else {
+                roleSpan.textContent = 'Employee';
+                roleSpan.style.background = '#0052d4';
+                toggleBtn.textContent = '🔐 Switch to Admin';
+                toggleBtn.className = 'btn-role employee';
+                document.body.classList.add('employee-mode');
+                document.body.classList.remove('admin-mode');
+            }
+            
+            renderProductGrid();
+            renderProductTable();
+        }
+
+        // ============================================
+        // ===== 🧮 SALE AUTO-CALCULATION =====
         // ============================================
         function calculateSale() {
             const productId = document.getElementById('saleProduct').value;
@@ -2208,6 +2416,9 @@
             document.getElementById('quickSearch').focus();
         }
 
+        // ============================================
+        // ===== FILTER CHIPS FUNCTION =====
+        // ============================================
         function applyChipFilter(filter) {
             const searchInput = document.getElementById('quickSearch');
             
@@ -2253,8 +2464,9 @@
         function saveProduct(e) {
             e.preventDefault();
             
+            // Check if user is admin
             if (!isAdmin) {
-                alert('⚠️ Only admins can add or edit products.');
+                alert('⚠️ Only admins can add or edit products. Please request admin access.');
                 return;
             }
             
@@ -2324,7 +2536,7 @@
 
         function deleteProduct(id) {
             if (!isAdmin) {
-                alert('⚠️ Only admins can delete products.');
+                alert('⚠️ Only admins can delete products. Please request admin access.');
                 return;
             }
             
@@ -2338,7 +2550,7 @@
 
         function editProduct(id) {
             if (!isAdmin) {
-                alert('⚠️ Only admins can edit products.');
+                alert('⚠️ Only admins can edit products. Please request admin access.');
                 return;
             }
             
@@ -2417,6 +2629,7 @@
                         ${p.sku ? `<div class="sku">SKU: ${p.sku}</div>` : ''}
                         ${p.category ? `<div class="category">${p.category}</div>` : ''}
                         <div class="price">${CURRENCY}${p.sellingPrice.toFixed(2)}</div>
+                        <!-- Cost Price - Admin Only -->
                         ${isAdmin ? `<div class="cost-price">Cost: ${CURRENCY}${p.costPrice.toFixed(2)}</div>` : ''}
                         <div class="stock ${stockClass}">📊 ${stockLabel}</div>
                         <div style="font-size:10px;color:#7f8c8d;">Last: ${CURRENCY}${p.lastPrice.toFixed(2)}</div>
@@ -2441,6 +2654,7 @@
                         <td>${p.category || '-'}</td>
                 `;
                 
+                // Cost column - Admin only
                 if (isAdmin) {
                     row += `<td>${CURRENCY}${p.costPrice.toFixed(2)}</td>`;
                 }
@@ -2548,7 +2762,7 @@
         }
 
         // ============================================
-        // ===== REPORTS =====
+        // ===== 📈 REPORTS WITH YEARLY OPTION =====
         // ============================================
         function generateReport(period, btnElement) {
             const now = new Date();
@@ -2654,6 +2868,9 @@
             document.getElementById('reportOutput').innerHTML = reportHTML;
         }
 
+        // ============================================
+        // ===== 📈 YEARLY REPORT FUNCTION =====
+        // ============================================
         function generateYearlyReport(startDate, endDate) {
             const year = startDate.getFullYear();
             const filteredSales = sales.filter(s => {
