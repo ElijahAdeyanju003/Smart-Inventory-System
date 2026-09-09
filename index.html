@@ -230,6 +230,28 @@
             background: #c0392b;
         }
 
+        /* Role toggle button styles */
+        .btn-role {
+            background: #0052d4;
+            min-width: 100px;
+        }
+
+        .btn-role.admin {
+            background: #e74c3c;
+        }
+
+        .btn-role.admin:hover {
+            background: #c0392b;
+        }
+
+        .btn-role.employee {
+            background: #0052d4;
+        }
+
+        .btn-role.employee:hover {
+            background: #003399;
+        }
+
         /* ===== TABS ===== */
         .tabs {
             display: flex;
@@ -1176,6 +1198,12 @@
                 padding: 3px 10px;
                 min-height: 26px;
             }
+
+            .btn-role {
+                min-width: 80px;
+                font-size: 10px;
+                padding: 6px 10px;
+            }
         }
 
         /* Tablets and small laptops */
@@ -1319,7 +1347,7 @@
                 </div>
                 <div class="user-badge">
                     <span id="userRole">Employee</span>
-                    <button onclick="toggleRole()" style="background:#0052d4;font-size:11px;padding:4px 10px;min-height:30px;">Admin</button>
+                    <button id="roleToggleBtn" onclick="toggleRole()" class="btn-role employee">Switch to Admin</button>
                 </div>
                 <button onclick="syncToCloud()" class="btn-success" style="font-size:11px;padding:4px 10px;min-height:30px;">☁️ Sync</button>
                 <button onclick="testSupabaseConnection()" style="background:#8e44ad;font-size:11px;padding:4px 10px;min-height:30px;">🔌 Test</button>
@@ -1916,8 +1944,41 @@
         // ============================================
         function init() {
             loadFromSupabase();
-            document.getElementById('userRole').textContent = 'Employee';
-            document.getElementById('userRole').style.background = '#0052d4';
+            updateRoleUI();
+        }
+
+        // ============================================
+        // ===== ROLE TOGGLE =====
+        // ============================================
+        function updateRoleUI() {
+            const roleSpan = document.getElementById('userRole');
+            const toggleBtn = document.getElementById('roleToggleBtn');
+            
+            if (isAdmin) {
+                roleSpan.textContent = 'Admin';
+                roleSpan.style.background = '#e74c3c';
+                toggleBtn.textContent = 'Switch to Employee';
+                toggleBtn.className = 'btn-role admin';
+            } else {
+                roleSpan.textContent = 'Employee';
+                roleSpan.style.background = '#0052d4';
+                toggleBtn.textContent = 'Switch to Admin';
+                toggleBtn.className = 'btn-role employee';
+            }
+            
+            renderProductGrid();
+            renderProductTable();
+        }
+
+        function toggleRole() {
+            isAdmin = !isAdmin;
+            updateRoleUI();
+            
+            if (isAdmin) {
+                alert('🔐 Admin mode activated - You can now see cost prices and edit products');
+            } else {
+                alert('👤 Employee mode - Only showing selling prices');
+            }
         }
 
         // ============================================
@@ -2691,24 +2752,6 @@
                 setTimeout(() => {
                     document.getElementById('quickSearch').focus();
                 }, 100);
-            }
-        }
-
-        // ============================================
-        // ===== ROLE TOGGLE =====
-        // ============================================
-        function toggleRole() {
-            isAdmin = !isAdmin;
-            document.getElementById('userRole').textContent = isAdmin ? 'Admin' : 'Employee';
-            document.getElementById('userRole').style.background = isAdmin ? '#e74c3c' : '#0052d4';
-            
-            renderProductGrid();
-            renderProductTable();
-            
-            if (isAdmin) {
-                alert('🔐 Admin mode activated - You can now see cost prices and edit products');
-            } else {
-                alert('👤 Employee mode - Only showing selling prices');
             }
         }
 
