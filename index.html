@@ -145,6 +145,15 @@
             font-weight: 600;
         }
 
+        .user-badge .user-name {
+            background: #2c3e50;
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: clamp(11px, 1.5vw, 14px);
+            font-weight: 600;
+        }
+
         .supabase-status {
             display: flex;
             align-items: center;
@@ -182,6 +191,17 @@
 
         .supabase-status.offline .dot {
             background: #e74c3c;
+        }
+
+        .btn-logout {
+            background: #e74c3c;
+            padding: 6px 14px;
+            font-size: 12px;
+            min-height: 34px;
+        }
+
+        .btn-logout:hover {
+            background: #c0392b;
         }
 
         /* ===== BUTTON STYLES ===== */
@@ -228,27 +248,6 @@
 
         .btn-danger:hover {
             background: #c0392b;
-        }
-
-        .btn-role {
-            background: #0052d4;
-            min-width: 100px;
-        }
-
-        .btn-role.admin {
-            background: #e74c3c;
-        }
-
-        .btn-role.admin:hover {
-            background: #c0392b;
-        }
-
-        .btn-role.employee {
-            background: #0052d4;
-        }
-
-        .btn-role.employee:hover {
-            background: #003399;
         }
 
         /* ===== TABS ===== */
@@ -714,21 +713,8 @@
             display: none !important;
         }
 
-        .admin-visible {
-            display: block;
-        }
-
-        /* Show admin elements when admin class is on body */
         body.admin-mode .admin-only {
             display: block !important;
-        }
-
-        body.admin-mode .admin-visible {
-            display: block;
-        }
-
-        body.admin-mode .employee-hidden {
-            display: none !important;
         }
 
         /* ===== FORM STYLES ===== */
@@ -1083,7 +1069,6 @@
         /* ===== RESPONSIVE BREAKPOINTS ===== */
         /* ============================================ */
 
-        /* Small phones */
         @media (max-width: 480px) {
             body {
                 padding: 5px;
@@ -1237,15 +1222,8 @@
                 padding: 3px 10px;
                 min-height: 26px;
             }
-
-            .btn-role {
-                min-width: 80px;
-                font-size: 10px;
-                padding: 6px 10px;
-            }
         }
 
-        /* Tablets and small laptops */
         @media (min-width: 481px) and (max-width: 768px) {
             .container {
                 padding: 15px;
@@ -1304,7 +1282,6 @@
             }
         }
 
-        /* Large screens */
         @media (min-width: 769px) and (max-width: 1024px) {
             .product-grid {
                 grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -1319,7 +1296,6 @@
             }
         }
 
-        /* Touch-friendly adjustments */
         @media (hover: none) {
             button:hover {
                 transform: none;
@@ -1337,7 +1313,6 @@
             }
         }
 
-        /* Print styles */
         @media print {
             body {
                 background: white;
@@ -1352,7 +1327,7 @@
             .header-right button,
             .search-btn,
             .clear-all-btn,
-            .sync-btn {
+            .btn-logout {
                 display: none !important;
             }
 
@@ -1371,12 +1346,6 @@
     </style>
 </head>
 <body>
-    <!-- ===== LOADING OVERLAY ===== -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-spinner"></div>
-        <div class="loading-text">Loading data from cloud...</div>
-    </div>
-
     <div class="container">
         <!-- ===== HEADER WITH LOGO ===== -->
         <header>
@@ -1397,9 +1366,10 @@
                     <span>Sync</span>
                 </div>
                 <div class="user-badge">
-                    <span id="userRole">Employee</span>
-                    <button id="roleToggleBtn" onclick="toggleRole()" class="btn-role employee">Switch to Admin</button>
+                    <span class="user-name" id="userNameDisplay">User</span>
+                    <span id="userRoleDisplay">Employee</span>
                 </div>
+                <button onclick="logout()" class="btn-logout">🚪 Logout</button>
                 <button onclick="syncToCloud()" class="btn-success" style="font-size:11px;padding:4px 10px;min-height:30px;">☁️ Sync</button>
                 <button onclick="testSupabaseConnection()" style="background:#8e44ad;font-size:11px;padding:4px 10px;min-height:30px;">🔌 Test</button>
             </div>
@@ -1547,7 +1517,6 @@
                             <th>Name</th>
                             <th>SKU</th>
                             <th>Category</th>
-                            <!-- Cost Column - Admin Only -->
                             <th class="admin-only">Cost</th>
                             <th>Selling</th>
                             <th>Last</th>
@@ -1560,7 +1529,7 @@
             </div>
         </div>
 
-        <!-- ===== SALES TAB WITH AUTO-CALCULATION ===== -->
+        <!-- ===== SALES TAB ===== -->
         <div id="sales" class="tab-content">
             <div class="form-section">
                 <h2>💰 Record Sale</h2>
@@ -1576,7 +1545,6 @@
                         <button type="submit" style="background:#00a86b;">💰 Record Sale</button>
                     </div>
 
-                    <!-- ===== AUTO-CALCULATED SALE SUMMARY ===== -->
                     <div id="saleSummary" class="sale-summary">
                         <div class="sale-detail">
                             <span class="label">Product:</span>
@@ -1619,7 +1587,7 @@
             </div>
         </div>
 
-        <!-- ===== REPORTS TAB WITH YEARLY OPTION ===== -->
+        <!-- ===== REPORTS TAB ===== -->
         <div id="reports" class="tab-content">
             <div class="report-filters">
                 <button class="report-btn" onclick="generateReport('daily', this)">📅 Today</button>
@@ -1634,30 +1602,71 @@
     </div>
 
     <!-- ============================================================ -->
-    <!-- ====== JAVASCRIPT - ALL FUNCTIONALITY ====== -->
+    <!-- ====== JAVASCRIPT ====== -->
     <!-- ============================================================ -->
     <script>
         // ============================================
-        // ===== 🗄️ SUPABASE CONFIGURATION =====
+        // ===== SUPABASE CONFIGURATION =====
         // ============================================
-        // IMPORTANT: Replace these with YOUR actual Supabase credentials
-        // Get from: https://supabase.com/dashboard/project/YOUR_PROJECT_ID/settings/api
-        
         const supabaseUrl = "https://wwzqkprdukzfhgwfhyoy.supabase.co";
         const supabaseKey = "sb_publishable_iiiAVZquuU4UvqMGY0Rygg_3JaKnalZ";
         
-        // Initialize Supabase client
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
         let isOnline = false;
+
+        // ============================================
+        // ===== SESSION MANAGEMENT =====
+        // ============================================
+        let currentUser = null;
+        let isAdmin = false;
+
+        function checkSession() {
+            const session = localStorage.getItem('app_session');
+            if (!session) {
+                window.location.href = 'index.html';
+                return false;
+            }
+            
+            try {
+                const data = JSON.parse(session);
+                if (!data.loggedIn || !data.user) {
+                    window.location.href = 'index.html';
+                    return false;
+                }
+                
+                currentUser = data.user;
+                isAdmin = currentUser.role === 'admin';
+                
+                // Update UI with user info
+                document.getElementById('userNameDisplay').textContent = currentUser.name;
+                document.getElementById('userRoleDisplay').textContent = isAdmin ? 'Admin' : 'Employee';
+                document.getElementById('userRoleDisplay').style.background = isAdmin ? '#e74c3c' : '#0052d4';
+                
+                if (isAdmin) {
+                    document.body.classList.add('admin-mode');
+                }
+                
+                return true;
+            } catch (e) {
+                console.error('Session error:', e);
+                window.location.href = 'index.html';
+                return false;
+            }
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('app_session');
+                window.location.href = 'index.html';
+            }
+        }
 
         // ============================================
         // ===== DATA STORE =====
         // ============================================
         let products = [];
         let sales = [];
-        let isAdmin = false;
         let searchTimeout = null;
-
         const CURRENCY = '₦';
         const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -1725,7 +1734,6 @@
         // ===== SUPABASE DATA OPERATIONS =====
         // ============================================
         
-        // Load Products from Supabase
         async function loadProductsFromSupabase() {
             try {
                 const { data, error } = await supabaseClient
@@ -1762,7 +1770,6 @@
             }
         }
 
-        // Load Sales from Supabase
         async function loadSalesFromSupabase() {
             try {
                 const { data, error } = await supabaseClient
@@ -1794,7 +1801,6 @@
             }
         }
 
-        // Load all data from Supabase
         async function loadFromSupabase() {
             showLoading(true);
             try {
@@ -1817,7 +1823,6 @@
             }
         }
 
-        // Save Products to Supabase
         async function saveProductsToSupabase() {
             try {
                 const { error: deleteError } = await supabaseClient
@@ -1862,7 +1867,6 @@
             }
         }
 
-        // Save Sales to Supabase
         async function saveSalesToSupabase() {
             try {
                 const { error: deleteError } = await supabaseClient
@@ -1902,7 +1906,6 @@
             }
         }
 
-        // Save all data to Supabase
         async function saveToSupabase() {
             showLoading(true);
             try {
@@ -1925,7 +1928,6 @@
             }
         }
 
-        // Sync to cloud
         async function syncToCloud() {
             const result = await saveToSupabase();
             if (result) {
@@ -1998,50 +2000,12 @@
         // ===== INITIALIZATION =====
         // ============================================
         function init() {
+            if (!checkSession()) return;
             loadFromSupabase();
-            updateRoleUI();
         }
 
         // ============================================
-        // ===== ROLE TOGGLE =====
-        // ============================================
-        function updateRoleUI() {
-            const roleSpan = document.getElementById('userRole');
-            const toggleBtn = document.getElementById('roleToggleBtn');
-            
-            if (isAdmin) {
-                roleSpan.textContent = 'Admin';
-                roleSpan.style.background = '#e74c3c';
-                toggleBtn.textContent = 'Switch to Employee';
-                toggleBtn.className = 'btn-role admin';
-                document.body.classList.add('admin-mode');
-                document.body.classList.remove('employee-mode');
-            } else {
-                roleSpan.textContent = 'Employee';
-                roleSpan.style.background = '#0052d4';
-                toggleBtn.textContent = 'Switch to Admin';
-                toggleBtn.className = 'btn-role employee';
-                document.body.classList.add('employee-mode');
-                document.body.classList.remove('admin-mode');
-            }
-            
-            renderProductGrid();
-            renderProductTable();
-        }
-
-        function toggleRole() {
-            isAdmin = !isAdmin;
-            updateRoleUI();
-            
-            if (isAdmin) {
-                alert('🔐 Admin mode activated - You can now see and edit cost prices');
-            } else {
-                alert('👤 Employee mode - Only showing selling and last prices');
-            }
-        }
-
-        // ============================================
-        // ===== 🧮 SALE AUTO-CALCULATION =====
+        // ===== SALE AUTO-CALCULATION =====
         // ============================================
         function calculateSale() {
             const productId = document.getElementById('saleProduct').value;
@@ -2244,9 +2208,6 @@
             document.getElementById('quickSearch').focus();
         }
 
-        // ============================================
-        // ===== FILTER CHIPS FUNCTION =====
-        // ============================================
         function applyChipFilter(filter) {
             const searchInput = document.getElementById('quickSearch');
             
@@ -2291,6 +2252,11 @@
         // ============================================
         function saveProduct(e) {
             e.preventDefault();
+            
+            if (!isAdmin) {
+                alert('⚠️ Only admins can add or edit products.');
+                return;
+            }
             
             const id = document.getElementById('productId').value;
             const name = document.getElementById('productName').value;
@@ -2357,6 +2323,11 @@
         }
 
         function deleteProduct(id) {
+            if (!isAdmin) {
+                alert('⚠️ Only admins can delete products.');
+                return;
+            }
+            
             if (confirm('Delete this product?')) {
                 products = products.filter(p => p.id !== id);
                 saveToLocalStorage();
@@ -2366,6 +2337,11 @@
         }
 
         function editProduct(id) {
+            if (!isAdmin) {
+                alert('⚠️ Only admins can edit products.');
+                return;
+            }
+            
             const product = products.find(p => p.id === id);
             if (product) {
                 document.getElementById('productId').value = product.id;
@@ -2441,7 +2417,6 @@
                         ${p.sku ? `<div class="sku">SKU: ${p.sku}</div>` : ''}
                         ${p.category ? `<div class="category">${p.category}</div>` : ''}
                         <div class="price">${CURRENCY}${p.sellingPrice.toFixed(2)}</div>
-                        <!-- Cost Price - Admin Only -->
                         ${isAdmin ? `<div class="cost-price">Cost: ${CURRENCY}${p.costPrice.toFixed(2)}</div>` : ''}
                         <div class="stock ${stockClass}">📊 ${stockLabel}</div>
                         <div style="font-size:10px;color:#7f8c8d;">Last: ${CURRENCY}${p.lastPrice.toFixed(2)}</div>
@@ -2466,7 +2441,6 @@
                         <td>${p.category || '-'}</td>
                 `;
                 
-                // Cost column - Admin only
                 if (isAdmin) {
                     row += `<td>${CURRENCY}${p.costPrice.toFixed(2)}</td>`;
                 }
@@ -2574,7 +2548,7 @@
         }
 
         // ============================================
-        // ===== 📈 REPORTS WITH YEARLY OPTION =====
+        // ===== REPORTS =====
         // ============================================
         function generateReport(period, btnElement) {
             const now = new Date();
@@ -2680,9 +2654,6 @@
             document.getElementById('reportOutput').innerHTML = reportHTML;
         }
 
-        // ============================================
-        // ===== 📈 YEARLY REPORT FUNCTION =====
-        // ============================================
         function generateYearlyReport(startDate, endDate) {
             const year = startDate.getFullYear();
             const filteredSales = sales.filter(s => {
